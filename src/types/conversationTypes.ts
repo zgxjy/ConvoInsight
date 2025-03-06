@@ -36,6 +36,23 @@ export interface CustomerInfo {
   history: string;
 }
 
+export interface ResolutionStatus {
+  status: string;
+  description: string;
+}
+
+export interface ConversationSummary {
+  mainIssue: string;
+  resolutionStatus: ResolutionStatus;
+  mainSolution: string;
+}
+
+export interface InteractionAnalysis {
+  totalMessages: number;
+  agentMessages: number;
+  imageMessages: number;
+}
+
 export interface ConversationData {
   id: string;
   time: string;
@@ -46,12 +63,49 @@ export interface ConversationData {
   };
   customerInfo: CustomerInfo;
   summary: string;
+  conversationSummary: ConversationSummary;
   tags: string[];
   messages: Message[];
+  improvementSuggestions: string[];
+  interactionAnalysis: InteractionAnalysis;
 }
 
-export interface InteractionAnalysis {
-  totalMessages: number;
-  agentMessages: number;
-  imageMessages: number;
+// 列表页面使用的简化会话数据类型
+export interface ConversationListItem {
+  id: string;
+  time: string;
+  agent: string;
+  customerId: string;
+  mainIssue: string;
+  resolutionStatus: string;
+  tags: string[];
+}
+
+// 分页数据结构
+export interface PaginationData {
+  current: number;
+  pageSize: number;
+  total: number;
+}
+
+// 筛选条件类型
+export interface FilterParams {
+  timeRange?: [string, string];
+  agent?: string;
+  resolutionStatus?: string;
+  tag?: string;
+  searchText?: string;
+}
+
+// 后端API响应数据结构
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+// 分页列表响应数据结构
+export interface PaginatedResponse<T> {
+  items: T[];
+  pagination: PaginationData;
 }

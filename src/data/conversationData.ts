@@ -1,10 +1,5 @@
 import { 
-  Metric, 
-  Metrics, 
-  JourneyStep, 
-  Message, 
-  CustomerInfo, 
-  ConversationData 
+  ConversationData,
 } from '../types/conversationTypes';
 
 export const conversationData: ConversationData = {
@@ -93,6 +88,14 @@ export const conversationData: ConversationData = {
     history: "首次咨询"
   },
   summary: "用户咨询Insta360 X4视频误删除恢复问题，客服说明了删除情况下的处理方案，并建议用户使用第三方恢复软件。",
+  conversationSummary: {
+    mainIssue: "用户反映相机在室内拍摄太暗，室外拍摄曝光严重",
+    resolutionStatus: {
+      status: "部分解决",
+      description: "提供了参数解释和教程链接"
+    },
+    mainSolution: "解释相机参数（EV、WB、ISO、快门速度）并分享夜景拍摄教程"
+  },
   tags: ["数据恢复", "文件删除", "App操作"],
   messages: [
     { type: 'system', content: '系统：有新的咨询进来了。', time: '16:43' },
@@ -106,19 +109,15 @@ export const conversationData: ConversationData = {
     { type: 'agent', content: '嗯嗯，关于您反馈的app等文件备份的问题，我们也会去反馈给相关部门进行评估的，同时也温馨提醒您，后续可以及时备份下文件，避免文件丢失的', time: '16:52', sender: '沐沐' },
     { type: 'agent', content: '请问还有其他可以帮到您的吗？', time: '17:00', sender: '沐沐' },
     { type: 'system', content: '系统发送满意度调查', time: '17:05' }
-  ]
-};
-
-// Additional data for improvement suggestions
-export const improvementSuggestions = [
-  "建议提供更详细的文件恢复指导",
-  "可以增加预防性提醒",
-  "考虑添加自动备份功能建议"
-];
-
-// Additional data for interaction analysis
-export const interactionAnalysis = {
-  totalMessages: 16,
-  agentMessages: 13,
-  imageMessages: 0
+  ],
+  improvementSuggestions: [
+    "建议提供更详细的文件恢复指导",
+    "可以增加预防性提醒",
+    "考虑添加自动备份功能建议"
+  ],
+  interactionAnalysis: {
+    totalMessages: 16,
+    agentMessages: 13,
+    imageMessages: 0
+  }
 };

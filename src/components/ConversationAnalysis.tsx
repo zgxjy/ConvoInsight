@@ -1,15 +1,13 @@
-import React from 'react';
-import { ExportOutlined, TagOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { TagOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Button, Spin, Result, Empty } from 'antd';
 import { 
-  ConversationData, 
   JourneyStep, 
-  Message 
+  Message,
+  ConversationData
 } from '../types/conversationTypes';
-import { 
-  conversationData, 
-  improvementSuggestions, 
-  interactionAnalysis 
-} from '../data/conversationData';
+import { fetchConversationDetail } from '../services/api';
 
 const SectionTitle: React.FC<{title: string}> = ({title}) => (
   <h3 style={{ 
@@ -35,7 +33,117 @@ const SectionTitle: React.FC<{title: string}> = ({title}) => (
 );
 
 const ConversationAnalysis: React.FC = () => {
-  // 创建一个可重用的带有蓝色竖条的标题组件
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [conversation, setConversation] = useState<ConversationData | null>(null);
+  
+  // 加载会话详情数据
+  useEffect(() => {
+    console.log('会话详情页面接收到的ID:', id);
+    
+    const loadConversationDetail = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        if (!id) {
+          throw new Error('会话ID不能为空');
+        }
+        
+        // 确保ID正确解码，处理可能包含特殊字符的ID
+        const decodedId = decodeURIComponent(id);
+        console.log('解码后的ID:', decodedId);
+        
+        const response = await fetchConversationDetail(decodedId);
+        console.log('API响应:', response);
+        
+        if (response.success) {
+          setConversation(response.data);
+        } else {
+          setError(response.message || '获取会话详情失败');
+        }
+      } catch (err) {
+        console.error('获取会话详情出错:', err);
+        setError('获取会话详情出错');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadConversationDetail();
+  }, [id]);
+  
+  const handleBackClick = () => {
+    navigate('/conversations');
+  };
+
+  // 显示加载状态
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        background: '#fff'
+      }}>
+        <Spin size="large" tip="加载会话详情..." />
+      </div>
+    );
+  }
+  
+  // 显示错误信息
+  if (error || !conversation) {
+    return (
+      <div style={{
+        background: '#fff',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <Result
+          status="error"
+          title="加载失败"
+          subTitle={error || '无法加载会话详情'}
+          extra={
+            <Button type="primary" onClick={handleBackClick}>
+              返回会话列表
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
+
+  // 确保所有必需的数据都存在
+  if (!conversation.customerInfo || !conversation.conversationSummary || 
+      !conversation.metrics || !conversation.journey || !conversation.messages) {
+    return (
+      <div style={{
+        background: '#fff',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column'
+      }}>
+        <Empty description="会话数据不完整" />
+        <Button 
+          type="primary" 
+          onClick={handleBackClick}
+          style={{ marginTop: 16 }}
+        >
+          返回会话列表
+        </Button>
+      </div>
+    );
+  }
+
+  // 调试输出
+  console.log('渲染会话数据:', conversation);
 
   return (
     <div className="conversation-analysis" style={{
@@ -47,6 +155,23 @@ const ConversationAnalysis: React.FC = () => {
       gap: 24,
       backgroundColor: '#fff'
     }}>
+      {/* 返回按钮和会话ID */}
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center',
+        marginBottom: 16
+      }}>
+        <Button 
+          type="text" 
+          icon={<ArrowLeftOutlined />} 
+          onClick={handleBackClick}
+          style={{ marginRight: 16 }}
+        >
+          返回会话列表
+        </Button>
+        <h2 style={{ margin: 0 }}>会话 {conversation.id}</h2>
+      </div>
+
       {/* 顶部信息行 */}
       <div style={{ 
         display: 'grid',
@@ -64,15 +189,15 @@ const ConversationAnalysis: React.FC = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div>
               <div style={{ fontSize: 12, color: '#666' }}>用户ID</div>
-              <div style={{ fontWeight: 500 }}>{conversationData.customerInfo.userId}</div>
+              <div style={{ fontWeight: 500 }}>{conversation.customerInfo.userId}</div>
             </div>
             <div>
               <div style={{ fontSize: 12, color: '#666' }}>设备型号</div>
-              <div style={{ fontWeight: 500 }}>{conversationData.customerInfo.device}</div>
+              <div style={{ fontWeight: 500 }}>{conversation.customerInfo.device}</div>
             </div>
             <div>
               <div style={{ fontSize: 12, color: '#666' }}>联系历史</div>
-              <div style={{ fontWeight: 500 }}>{conversationData.customerInfo.history}</div>
+              <div style={{ fontWeight: 500 }}>{conversation.customerInfo.history}</div>
             </div>
           </div>
         </div>
@@ -108,7 +233,7 @@ const ConversationAnalysis: React.FC = () => {
                 flexWrap: 'wrap',
                 marginBottom: 8
               }}>
-                {conversationData.tags.map((tag: string, index: number) => (
+                {conversation.tags.map((tag: string, index: number) => (
                   <span key={index} style={{
                     padding: '4px 8px',
                     borderRadius: 12,
@@ -134,7 +259,7 @@ const ConversationAnalysis: React.FC = () => {
                 color: '#1f1f1f',
                 lineHeight: 1.6,
                 fontSize: 14
-              }}>用户反映相机在室内拍摄太暗，室外拍摄曝光严重</div>
+              }}>{conversation.conversationSummary.mainIssue}</div>
             </div>
 
             <div>
@@ -155,13 +280,13 @@ const ConversationAnalysis: React.FC = () => {
                   borderRadius: 12,
                   fontSize: 12,
                   fontWeight: 400
-                }}>部分解决</span>
+                }}>{conversation.conversationSummary.resolutionStatus.status}</span>
               </div>
               <div style={{ 
                 color: '#1f1f1f',
                 lineHeight: 1.6,
                 fontSize: 14
-              }}>提供了参数解释和教程链接</div>
+              }}>{conversation.conversationSummary.resolutionStatus.description}</div>
             </div>
 
             <div>
@@ -175,7 +300,7 @@ const ConversationAnalysis: React.FC = () => {
                 color: '#1f1f1f',
                 lineHeight: 1.6,
                 fontSize: 14
-              }}>解释相机参数（EV、WB、ISO、快门速度）并分享夜景拍摄教程</div>
+              }}>{conversation.conversationSummary.mainSolution}</div>
             </div>
           </div>
         </div>
@@ -214,9 +339,9 @@ const ConversationAnalysis: React.FC = () => {
             <div style={{ 
               fontSize: 36,
               fontWeight: 600,
-              color: conversationData.metrics.satisfaction.value > 50 ? '#52c41a' : '#ff4d4f'
+              color: conversation.metrics.satisfaction.value > 50 ? '#52c41a' : '#ff4d4f'
             }}>
-              {conversationData.metrics.satisfaction.value}
+              {conversation.metrics.satisfaction.value}
               <span style={{ 
                 color: '#8c8c8c',
                 fontSize: 24,
@@ -244,9 +369,9 @@ const ConversationAnalysis: React.FC = () => {
             <div style={{ 
               fontSize: 36,
               fontWeight: 600,
-              color: conversationData.metrics.resolution.value > 50 ? '#52c41a' : '#ff4d4f'
+              color: conversation.metrics.resolution.value > 50 ? '#52c41a' : '#ff4d4f'
             }}>
-              {conversationData.metrics.resolution.value}
+              {conversation.metrics.resolution.value}
               <span style={{ 
                 color: '#8c8c8c',
                 fontSize: 24,
@@ -274,9 +399,9 @@ const ConversationAnalysis: React.FC = () => {
             <div style={{ 
               fontSize: 36,
               fontWeight: 600,
-              color: conversationData.metrics.attitude.value > 50 ? '#52c41a' : '#ff4d4f'
+              color: conversation.metrics.attitude.value > 50 ? '#52c41a' : '#ff4d4f'
             }}>
-              {conversationData.metrics.attitude.value}
+              {conversation.metrics.attitude.value}
               <span style={{ 
                 color: '#8c8c8c',
                 fontSize: 24,
@@ -304,9 +429,9 @@ const ConversationAnalysis: React.FC = () => {
             <div style={{ 
               fontSize: 36,
               fontWeight: 600,
-              color: conversationData.metrics.risk.value > 50 ? '#52c41a' : '#ff4d4f'
+              color: conversation.metrics.risk.value > 50 ? '#52c41a' : '#ff4d4f'
             }}>
-              {conversationData.metrics.risk.value}
+              {conversation.metrics.risk.value}
               <span style={{ 
                 color: '#8c8c8c',
                 fontSize: 24,
@@ -333,7 +458,7 @@ const ConversationAnalysis: React.FC = () => {
           overflowX: 'auto',
           padding: '20px 0'
         }}>
-          {conversationData.journey.steps.map((step: JourneyStep, index: number) => (
+          {conversation.journey.steps.map((step: JourneyStep, index: number) => (
             <div key={step.id} style={{ 
               position: 'relative',
               minWidth: '280px'
@@ -359,7 +484,7 @@ const ConversationAnalysis: React.FC = () => {
               </div>
               
               {/* 连接线 */}
-              {index < conversationData.journey.steps.length - 1 && (
+              {index < conversation.journey.steps.length - 1 && (
                 <div style={{
                   position: 'absolute',
                   top: 0,
@@ -457,7 +582,7 @@ const ConversationAnalysis: React.FC = () => {
                   fontWeight: 600, 
                   color: '#1677ff',
                   marginBottom: 4
-                }}>{interactionAnalysis.totalMessages}</div>
+                }}>{conversation.interactionAnalysis.totalMessages}</div>
                 <div style={{ 
                   fontSize: 13,
                   color: '#666'
@@ -469,7 +594,7 @@ const ConversationAnalysis: React.FC = () => {
                   fontWeight: 600, 
                   color: '#1677ff',
                   marginBottom: 4
-                }}>{interactionAnalysis.agentMessages}</div>
+                }}>{conversation.interactionAnalysis.agentMessages}</div>
                 <div style={{ 
                   fontSize: 13,
                   color: '#666'
@@ -481,7 +606,7 @@ const ConversationAnalysis: React.FC = () => {
                   fontWeight: 600, 
                   color: '#1677ff',
                   marginBottom: 4
-                }}>{interactionAnalysis.imageMessages}</div>
+                }}>{conversation.interactionAnalysis.imageMessages}</div>
                 <div style={{ 
                   fontSize: 13,
                   color: '#666'
@@ -510,7 +635,7 @@ const ConversationAnalysis: React.FC = () => {
               gap: 12,
               flex: 1
             }}>
-              {improvementSuggestions.map((suggestion, index) => (
+              {conversation.improvementSuggestions.map((suggestion, index) => (
                 <li key={index} style={{ 
                   padding: 8,
                   background: '#fffbe6',
@@ -550,7 +675,7 @@ const ConversationAnalysis: React.FC = () => {
             flexDirection: 'column',
             gap: 12
           }}>
-            {conversationData.messages.map((message: Message, index: number) => (
+            {conversation.messages.map((message: Message, index: number) => (
               <div key={index} style={{ 
                 alignSelf: message.type === 'system' ? 'center' : 
                           message.type === 'user' ? 'flex-end' : 'flex-start',
