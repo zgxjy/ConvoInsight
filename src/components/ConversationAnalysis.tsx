@@ -516,7 +516,7 @@ const ConversationAnalysis: React.FC = () => {
               
               {/* 内容区块 */}
               <div style={{ 
-                background: '#fafafa',
+                background: step.type === 'customer' ? '#f6ffed' : '#f0f5ff',
                 borderRadius: 8,
                 padding: 16,
                 marginTop: 24
@@ -526,7 +526,7 @@ const ConversationAnalysis: React.FC = () => {
                   justifyContent: 'space-between',
                   marginBottom: 8
                 }}>
-                  <div style={{ color: '#1677ff' }}>
+                  <div style={{ color: step.type === 'customer' ? '#52c41a' : '#1677ff' }}>
                     {step.layer === 1 ? '意图识别' : 
                      step.layer === 2 ? '解决方案' : '情绪识别'}
                   </div>
