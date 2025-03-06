@@ -663,12 +663,6 @@ const ConversationAnalysis: React.FC = () => {
             marginBottom: 16
           }}>
             <h3 style={{ color: '#1f1f1f' }}>对话记录</h3>
-            <span style={{ 
-              padding: '4px 8px',
-              background: '#f5f5f5',
-              borderRadius: 4,
-              fontSize: 12
-            }}>{conversationData.messages.length}条消息</span>
           </div>
           <div style={{ 
             maxHeight: '60vh',
@@ -679,11 +673,11 @@ const ConversationAnalysis: React.FC = () => {
           }}>
             {conversationData.messages.map((message: Message, index: number) => (
               <div key={index} style={{ 
-                alignSelf: message.type === 'user' ? 'flex-start' : 'flex-end',
+                alignSelf: message.type === 'user' ? 'flex-end' : 'flex-start',
                 maxWidth: '80%'
               }}>
                 <div style={{ 
-                  background: message.type === 'user' ? '#f5f5f5' : '#e6f4ff',
+                  background: message.type === 'user' ? '#e6f4ff' : '#f5f5f5',
                   borderRadius: 8,
                   padding: 12,
                   position: 'relative'
