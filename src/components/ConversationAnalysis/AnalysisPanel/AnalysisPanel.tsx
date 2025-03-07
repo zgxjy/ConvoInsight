@@ -103,7 +103,12 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
       </Card>
 
       {/* 会话分析 */}
-      <Card style={{ flexShrink: 0 }}>
+      <Card style={{ 
+        flexGrow: 1, 
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'auto'
+      }}>
         <SectionTitle title="会话分析" />
         
         {/* 命中标签 */}
@@ -159,7 +164,7 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
                 display: 'flex', 
                 gap: styles.spacing.lg,
                 padding: styles.spacing.md,
-                background: styles.colors.background.grey,
+                background: styles.colors.background.light,
                 borderRadius: styles.borderRadius.sm
               }}>
                 <div>
