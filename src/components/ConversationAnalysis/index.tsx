@@ -9,6 +9,7 @@ import ConversationSummary from './ConversationSummary/ConversationSummary';
 import PerformanceMetrics from './PerformanceMetrics/PerformanceMetrics';
 import MessageList from './MessageList/MessageList';
 import AnalysisPanel from './AnalysisPanel/AnalysisPanel';
+import { ConversationData, Message } from '../../types/conversationTypes';
 
 /**
  * 会话分析主组件
@@ -19,7 +20,7 @@ const ConversationAnalysis: React.FC = () => {
   const navigate = useNavigate();
   
   // 使用自定义Hook获取会话数据
-  const { loading, error, conversation } = useConversationData(id);
+  const { loading, error, conversation }: { loading: boolean, error: string | null, conversation: ConversationData | null } = useConversationData(id);
 
   // 返回上一页
   const handleBack = () => {
@@ -139,7 +140,15 @@ const ConversationAnalysis: React.FC = () => {
         </h1>
       </div>
 
-      {/* 顶部信息行 */}
+      {/* 客服表现评估 */}
+      <PerformanceMetrics 
+        satisfaction={conversation.metrics.satisfaction}
+        resolution={conversation.metrics.resolution}
+        attitude={conversation.metrics.attitude}
+        risk={conversation.metrics.risk}
+      />
+
+      {/* 摘要信息行 */}
       <div style={{ 
         display: 'grid',
         gridTemplateColumns: '300px 1fr',
@@ -161,14 +170,6 @@ const ConversationAnalysis: React.FC = () => {
         />
       </div>
 
-      {/* 客服表现评估 */}
-      <PerformanceMetrics 
-        satisfaction={conversation.metrics.satisfaction}
-        resolution={conversation.metrics.resolution}
-        attitude={conversation.metrics.attitude}
-        risk={conversation.metrics.risk}
-      />
-
       {/* 底部区块 */}
       <div style={{ 
         display: 'grid',
@@ -183,18 +184,18 @@ const ConversationAnalysis: React.FC = () => {
           tags={conversation.tags || []}
           emotionSummary={{
             positive: conversation.messages
-              .filter(msg => msg.type === 'user' && msg.sentiment === '正向').length,
+              .filter((msg: Message) => msg.type === 'user' && msg.sentiment === '正向').length,
             neutral: conversation.messages
-              .filter(msg => msg.type === 'user' && msg.sentiment === '中立').length,
+              .filter((msg: Message) => msg.type === 'user' && msg.sentiment === '中立').length,
             negative: conversation.messages
-              .filter(msg => msg.type === 'user' && msg.sentiment === '负向').length
+              .filter((msg: Message) => msg.type === 'user' && msg.sentiment === '负向').length
           }}
           hotWords={conversation.hotWords || []}
           improvementSuggestions={conversation.improvementSuggestions || []}
           interactionAnalysis={{
             totalMessages: conversation.messages.length,
-            agentMessages: conversation.messages.filter(msg => msg.type === 'agent').length,
-            userMessages: conversation.messages.filter(msg => msg.type === 'user').length
+            agentMessages: conversation.messages.filter((msg: Message) => msg.type === 'agent').length,
+            userMessages: conversation.messages.filter((msg: Message) => msg.type === 'user').length
           }}
         />
       </div>
