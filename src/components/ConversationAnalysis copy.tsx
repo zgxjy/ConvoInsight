@@ -8,14 +8,93 @@ import {
 } from '../types/conversationTypes';
 import { fetchConversationDetail } from '../services/api';
 
+// 设计系统变量
+const styles = {
+  // 颜色系统
+  colors: {
+    primary: '#1677ff',
+    success: '#52c41a',
+    warning: '#faad14',
+    error: '#ff4d4f',
+    text: {
+      primary: '#1f1f1f',
+      secondary: '#595959',
+      tertiary: '#8c8c8c',
+    },
+    background: {
+      light: '#ffffff',
+      grey: '#f5f5f5',
+      primaryLight: 'rgba(22, 119, 255, 0.1)',
+      successLight: 'rgba(82, 196, 26, 0.1)',
+      warningLight: 'rgba(250, 173, 20, 0.1)',
+      errorLight: 'rgba(255, 77, 79, 0.1)',
+    },
+    border: '#d9d9d9',
+  },
+  // 间距系统
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px',
+  },
+  // 阴影系统
+  shadows: {
+    primary: '0 2px 8px rgba(0,0,0,0.08)',
+    hover: '0 4px 12px rgba(0,0,0,0.12)',
+  },
+  // 圆角系统
+  borderRadius: {
+    sm: '4px',
+    md: '8px',
+    lg: '16px',
+  },
+  // 字体系统
+  typography: {
+    h1: {
+      fontSize: '24px',
+      fontWeight: 600,
+    },
+    h2: {
+      fontSize: '20px',
+      fontWeight: 600,
+    },
+    h3: {
+      fontSize: '16px',
+      fontWeight: 600,
+    },
+    body: {
+      fontSize: '14px',
+      fontWeight: 400,
+    },
+    small: {
+      fontSize: '12px',
+      fontWeight: 400,
+    },
+    micro: {
+      fontSize: '10px',
+      fontWeight: 400,
+    },
+  },
+  // 卡片样式
+  card: {
+    padding: '16px',
+    borderRadius: '8px',
+    background: '#ffffff',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  },
+};
+
 const SectionTitle: React.FC<{title: string}> = ({title}) => (
   <h3 style={{ 
-    color: '#1f1f1f', 
-    marginBottom: 16,
+    color: styles.colors.text.primary, 
+    marginBottom: styles.spacing.md,
     position: 'relative',
     paddingLeft: '12px',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    ...styles.typography.h3,
   }}>
     <div style={{
       position: 'absolute',
@@ -24,7 +103,7 @@ const SectionTitle: React.FC<{title: string}> = ({title}) => (
       transform: 'translateY(-50%)',
       width: '4px',
       height: '18px',
-      background: '#1677ff',
+      background: styles.colors.primary,
       borderRadius: '2px'
     }}></div>
     {title}
@@ -86,7 +165,7 @@ const ConversationAnalysis: React.FC = () => {
         justifyContent: 'center', 
         alignItems: 'center', 
         height: '100vh',
-        background: '#fff'
+        background: styles.colors.background.light
       }}>
         <Spin size="large" tip="加载会话详情..." />
       </div>
@@ -97,7 +176,7 @@ const ConversationAnalysis: React.FC = () => {
   if (error || !conversation) {
     return (
       <div style={{
-        background: '#fff',
+        background: styles.colors.background.light,
         height: '100vh',
         display: 'flex',
         justifyContent: 'center',
@@ -122,7 +201,7 @@ const ConversationAnalysis: React.FC = () => {
       !conversation.metrics || !conversation.messages) {
     return (
       <div style={{
-        background: '#fff',
+        background: styles.colors.background.light,
         height: '100vh',
         display: 'flex',
         justifyContent: 'center',
@@ -133,7 +212,7 @@ const ConversationAnalysis: React.FC = () => {
         <Button 
           type="primary" 
           onClick={handleBackClick}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: styles.spacing.md }}
         >
           返回会话列表
         </Button>
@@ -148,23 +227,23 @@ const ConversationAnalysis: React.FC = () => {
     <div className="conversation-analysis" style={{
       maxWidth: 1200,
       margin: '0 auto',
-      padding: 24,
+      padding: styles.spacing.lg,
       display: 'flex',
       flexDirection: 'column',
-      gap: 24,
-      backgroundColor: '#fff'
+      gap: styles.spacing.lg,
+      backgroundColor: styles.colors.background.light
     }}>
       {/* 返回按钮和会话ID */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center',
-        marginBottom: 16
+        marginBottom: styles.spacing.md
       }}>
         <Button 
           type="text" 
           icon={<ArrowLeftOutlined />} 
           onClick={handleBackClick}
-          style={{ marginRight: 16 }}
+          style={{ marginRight: styles.spacing.sm }}
         >
           返回会话列表
         </Button>
@@ -175,38 +254,38 @@ const ConversationAnalysis: React.FC = () => {
       <div style={{ 
         display: 'grid',
         gridTemplateColumns: '300px 1fr',
-        gap: 24
+        gap: styles.spacing.lg
       }}>
         {/* 客户信息 */}
         <div style={{
-          background: '#fff',
-          borderRadius: 8,
-          padding: 16,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          background: styles.colors.background.light,
+          borderRadius: styles.borderRadius.md,
+          padding: styles.spacing.md,
+          boxShadow: styles.shadows.primary
         }}>
           <SectionTitle title="客户信息" />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: styles.spacing.sm }}>
             <div>
-              <div style={{ fontSize: 12, color: '#666' }}>用户ID</div>
-              <div style={{ fontWeight: 500 }}>{conversation.customerInfo.userId}</div>
+              <div style={{ fontSize: styles.typography.small.fontSize, color: styles.colors.text.tertiary }}>用户ID</div>
+              <div style={{ fontWeight: styles.typography.body.fontWeight }}>{conversation.customerInfo.userId}</div>
             </div>
             <div>
-              <div style={{ fontSize: 12, color: '#666' }}>设备型号</div>
-              <div style={{ fontWeight: 500 }}>{conversation.customerInfo.device}</div>
+              <div style={{ fontSize: styles.typography.small.fontSize, color: styles.colors.text.tertiary }}>设备型号</div>
+              <div style={{ fontWeight: styles.typography.body.fontWeight }}>{conversation.customerInfo.device}</div>
             </div>
             <div>
-              <div style={{ fontSize: 12, color: '#666' }}>联系历史</div>
-              <div style={{ fontWeight: 500 }}>{conversation.customerInfo.history}</div>
+              <div style={{ fontSize: styles.typography.small.fontSize, color: styles.colors.text.tertiary }}>联系历史</div>
+              <div style={{ fontWeight: styles.typography.body.fontWeight }}>{conversation.customerInfo.history}</div>
             </div>
           </div>
         </div>
 
         {/* 会话摘要 */}
         <div style={{
-          background: '#fff',
-          borderRadius: 8,
-          padding: 16,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          background: styles.colors.background.light,
+          borderRadius: styles.borderRadius.md,
+          padding: styles.spacing.md,
+          boxShadow: styles.shadows.primary,
           display: 'flex',
           flexDirection: 'column',
           height: '100%'
@@ -215,90 +294,90 @@ const ConversationAnalysis: React.FC = () => {
           <div style={{ 
             display: 'flex',
             flexDirection: 'column',
-            gap: 16,
+            gap: styles.spacing.lg,
             marginBottom: 'auto'
           }}>
             <div>
               <div style={{ 
-                fontSize: 13,
-                marginBottom: 8,
-                fontWeight: 600,
-                color: '#1f1f1f'
+                fontSize: styles.typography.small.fontSize,
+                marginBottom: styles.spacing.sm,
+                fontWeight: styles.typography.body.fontWeight,
+                color: styles.colors.text.primary
               }}>主要问题</div>
               
               <div style={{ 
                 display: 'flex', 
-                gap: 8, 
+                gap: styles.spacing.sm, 
                 flexWrap: 'wrap',
-                marginBottom: 8
+                marginBottom: styles.spacing.sm
               }}>
                 {conversation.tags.map((tag: string, index: number) => (
                   <span key={index} style={{
-                    padding: '4px 8px',
-                    borderRadius: 12,
-                    background: index === 0 ? 'rgba(22, 119, 255, 0.1)' : 
-                              index === 1 ? 'rgba(250, 140, 22, 0.1)' : 
-                              'rgba(82, 196, 26, 0.1)',
-                    color: index === 0 ? '#1677ff' : 
-                          index === 1 ? '#fa8c16' : 
-                          '#52c41a',
-                    fontSize: 12,
-                    fontWeight: 500,
+                    padding: styles.spacing.xs,
+                    borderRadius: styles.borderRadius.sm,
+                    background: index === 0 ? styles.colors.background.primaryLight : 
+                              index === 1 ? styles.colors.background.warningLight : 
+                              styles.colors.background.successLight,
+                    color: index === 0 ? styles.colors.primary : 
+                          index === 1 ? styles.colors.warning : 
+                          styles.colors.success,
+                    fontSize: styles.typography.small.fontSize,
+                    fontWeight: styles.typography.body.fontWeight,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 4
+                    gap: styles.spacing.xs
                   }}>
-                    <TagOutlined style={{ fontSize: 10 }} />
+                    <TagOutlined style={{ fontSize: styles.typography.micro.fontSize }} />
                     {tag}
                   </span>
                 ))}
               </div>
               
               <div style={{ 
-                color: '#1f1f1f',
+                color: styles.colors.text.primary,
                 lineHeight: 1.6,
-                fontSize: 14
+                fontSize: styles.typography.body.fontSize
               }}>{conversation.conversationSummary.mainIssue}</div>
             </div>
 
             <div>
               <div style={{ 
-                fontSize: 13,
-                marginBottom: 4,
+                fontSize: styles.typography.small.fontSize,
+                marginBottom: styles.spacing.sm,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
-                fontWeight: 600,
-                color: '#1f1f1f'
+                gap: styles.spacing.sm,
+                fontWeight: styles.typography.body.fontWeight,
+                color: styles.colors.text.primary
               }}>
                 问题解决状态
                 <span style={{
-                  padding: '2px 8px',
-                  background: '#fff7e6',
-                  color: '#fa8c16',
-                  borderRadius: 12,
-                  fontSize: 12,
-                  fontWeight: 400
+                  padding: styles.spacing.xs,
+                  background: styles.colors.background.warningLight,
+                  color: styles.colors.warning,
+                  borderRadius: styles.borderRadius.sm,
+                  fontSize: styles.typography.small.fontSize,
+                  fontWeight: styles.typography.body.fontWeight
                 }}>{conversation.conversationSummary.resolutionStatus.status}</span>
               </div>
               <div style={{ 
-                color: '#1f1f1f',
+                color: styles.colors.text.primary,
                 lineHeight: 1.6,
-                fontSize: 14
+                fontSize: styles.typography.body.fontSize
               }}>{conversation.conversationSummary.resolutionStatus.description}</div>
             </div>
 
             <div>
               <div style={{ 
-                fontSize: 13,
-                marginBottom: 4,
-                fontWeight: 600,
-                color: '#1f1f1f'
+                fontSize: styles.typography.small.fontSize,
+                marginBottom: styles.spacing.sm,
+                fontWeight: styles.typography.body.fontWeight,
+                color: styles.colors.text.primary
               }}>主要解决方案</div>
               <div style={{ 
-                color: '#1f1f1f',
+                color: styles.colors.text.primary,
                 lineHeight: 1.6,
-                fontSize: 14
+                fontSize: styles.typography.body.fontSize
               }}>{conversation.conversationSummary.mainSolution}</div>
             </div>
           </div>
@@ -307,134 +386,134 @@ const ConversationAnalysis: React.FC = () => {
 
       {/* 指标卡片 */}
       <div style={{
-        background: '#fff',
-        borderRadius: 8,
-        padding: 16,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        marginBottom: 24
+        background: styles.colors.background.light,
+        borderRadius: styles.borderRadius.md,
+        padding: styles.spacing.md,
+        boxShadow: styles.shadows.primary,
+        marginBottom: styles.spacing.lg
       }}>
         <SectionTitle title="客服表现评估" />
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: 24
+          gap: styles.spacing.lg
         }}>
           {/* 客户满意度 */}
           <div style={{
-            background: '#fff',
-            borderRadius: 8,
-            padding: '32px 20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: styles.colors.background.light,
+            borderRadius: styles.borderRadius.md,
+            padding: styles.spacing.lg,
+            boxShadow: styles.shadows.primary,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center'
           }}>
             <div style={{ 
-              fontSize: 14,
-              color: '#666',
-              marginBottom: 16
+              fontSize: styles.typography.small.fontSize,
+              color: styles.colors.text.tertiary,
+              marginBottom: styles.spacing.md
             }}>客户满意度</div>
             <div style={{ 
-              fontSize: 36,
-              fontWeight: 600,
-              color: conversation.metrics.satisfaction.value > 50 ? '#52c41a' : '#ff4d4f'
+              fontSize: styles.typography.h1.fontSize,
+              fontWeight: styles.typography.h1.fontWeight,
+              color: conversation.metrics.satisfaction.value > 50 ? styles.colors.success : styles.colors.error
             }}>
               {conversation.metrics.satisfaction.value}
               <span style={{ 
-                color: '#8c8c8c',
-                fontSize: 24,
-                marginLeft: 4
+                color: styles.colors.text.tertiary,
+                fontSize: styles.typography.small.fontSize,
+                marginLeft: styles.spacing.sm
               }}>/100</span>
             </div>
           </div>
 
           {/* 专业能力 */}
           <div style={{
-            background: '#fff',
-            borderRadius: 8,
-            padding: '32px 20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: styles.colors.background.light,
+            borderRadius: styles.borderRadius.md,
+            padding: styles.spacing.lg,
+            boxShadow: styles.shadows.primary,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center'
           }}>
             <div style={{ 
-              fontSize: 14,
-              color: '#666',
-              marginBottom: 16
+              fontSize: styles.typography.small.fontSize,
+              color: styles.colors.text.tertiary,
+              marginBottom: styles.spacing.md
             }}>专业能力</div>
             <div style={{ 
-              fontSize: 36,
-              fontWeight: 600,
-              color: conversation.metrics.resolution.value > 50 ? '#52c41a' : '#ff4d4f'
+              fontSize: styles.typography.h1.fontSize,
+              fontWeight: styles.typography.h1.fontWeight,
+              color: conversation.metrics.resolution.value > 50 ? styles.colors.success : styles.colors.error
             }}>
               {conversation.metrics.resolution.value}
               <span style={{ 
-                color: '#8c8c8c',
-                fontSize: 24,
-                marginLeft: 4
+                color: styles.colors.text.tertiary,
+                fontSize: styles.typography.small.fontSize,
+                marginLeft: styles.spacing.sm
               }}>/100</span>
             </div>
           </div>
 
           {/* 解决能力 */}
           <div style={{
-            background: '#fff',
-            borderRadius: 8,
-            padding: '32px 20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: styles.colors.background.light,
+            borderRadius: styles.borderRadius.md,
+            padding: styles.spacing.lg,
+            boxShadow: styles.shadows.primary,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center'
           }}>
             <div style={{ 
-              fontSize: 14,
-              color: '#666',
-              marginBottom: 16
+              fontSize: styles.typography.small.fontSize,
+              color: styles.colors.text.tertiary,
+              marginBottom: styles.spacing.md
             }}>解决能力</div>
             <div style={{ 
-              fontSize: 36,
-              fontWeight: 600,
-              color: conversation.metrics.attitude.value > 50 ? '#52c41a' : '#ff4d4f'
+              fontSize: styles.typography.h1.fontSize,
+              fontWeight: styles.typography.h1.fontWeight,
+              color: conversation.metrics.attitude.value > 50 ? styles.colors.success : styles.colors.error
             }}>
               {conversation.metrics.attitude.value}
               <span style={{ 
-                color: '#8c8c8c',
-                fontSize: 24,
-                marginLeft: 4
+                color: styles.colors.text.tertiary,
+                fontSize: styles.typography.small.fontSize,
+                marginLeft: styles.spacing.sm
               }}>/100</span>
             </div>
           </div>
 
           {/* 礼貌表现 */}
           <div style={{
-            background: '#fff',
-            borderRadius: 8,
-            padding: '32px 20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: styles.colors.background.light,
+            borderRadius: styles.borderRadius.md,
+            padding: styles.spacing.lg,
+            boxShadow: styles.shadows.primary,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center'
           }}>
             <div style={{ 
-              fontSize: 14,
-              color: '#666',
-              marginBottom: 16
+              fontSize: styles.typography.small.fontSize,
+              color: styles.colors.text.tertiary,
+              marginBottom: styles.spacing.md
             }}>礼貌表现</div>
             <div style={{ 
-              fontSize: 36,
-              fontWeight: 600,
-              color: conversation.metrics.risk.value > 50 ? '#52c41a' : '#ff4d4f'
+              fontSize: styles.typography.h1.fontSize,
+              fontWeight: styles.typography.h1.fontWeight,
+              color: conversation.metrics.risk.value > 50 ? styles.colors.success : styles.colors.error
             }}>
               {conversation.metrics.risk.value}
               <span style={{ 
-                color: '#8c8c8c',
-                fontSize: 24,
-                marginLeft: 4
+                color: styles.colors.text.tertiary,
+                fontSize: styles.typography.small.fontSize,
+                marginLeft: styles.spacing.sm
               }}>/100</span>
             </div>
           </div>
@@ -445,20 +524,20 @@ const ConversationAnalysis: React.FC = () => {
       <div style={{ 
         display: 'grid',
         gridTemplateColumns: '1fr 380px',
-        gap: 24
+        gap: styles.spacing.lg
       }}>
         {/* 左侧对话记录 */}
         <div style={{
-          background: '#fff',
-          borderRadius: 8,
-          padding: 16,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          background: styles.colors.background.light,
+          borderRadius: styles.borderRadius.md,
+          padding: styles.spacing.md,
+          boxShadow: styles.shadows.primary
         }}>
           <div style={{ 
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: 16
+            marginBottom: styles.spacing.md
           }}>
             <SectionTitle title="对话记录" />
           </div>
@@ -467,7 +546,7 @@ const ConversationAnalysis: React.FC = () => {
             overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: 12
+            gap: styles.spacing.sm
           }}>
             {conversation.messages.map((message: Message, index: number) => (
               <div key={index} style={{ 
@@ -482,10 +561,11 @@ const ConversationAnalysis: React.FC = () => {
                                message.type === 'user' ? 'flex-start' : 'flex-end'
               }}>
                 <div style={{ 
-                  background: message.type === 'system' ? '#f0f0f0' :
-                              message.type === 'user' ? '#e6ffed' : '#e6f7ff',
-                  borderRadius: 8,
-                  padding: 12,
+                  background: message.type === 'system' ? styles.colors.background.grey :
+                              message.type === 'user' ? styles.colors.background.successLight : 
+                              styles.colors.background.primaryLight,
+                  borderRadius: styles.borderRadius.md,
+                  padding: styles.spacing.md,
                   position: 'relative',
                   textAlign: message.type === 'system' ? 'center' : 'left',
                   order: message.type === 'user' ? 1 : 0,
@@ -498,9 +578,9 @@ const ConversationAnalysis: React.FC = () => {
                     </React.Fragment>
                   ))}
                   <div style={{
-                    fontSize: 12,
-                    color: '#8c8c8c',
-                    marginTop: 8,
+                    fontSize: styles.typography.small.fontSize,
+                    color: styles.colors.text.tertiary,
+                    marginTop: styles.spacing.sm,
                     textAlign: 'left'
                   }}>
                     {message.time} • {message.type === 'user' ? '用户' : 
@@ -513,15 +593,16 @@ const ConversationAnalysis: React.FC = () => {
                     width: '24px',
                     height: '24px',
                     borderRadius: '50%',
-                    background: message.sentiment === '正向' ? '#52c41a' : 
-                              message.sentiment === '负向' ? '#ff4d4f' : '#faad14',
+                    background: message.sentiment === '正向' ? styles.colors.success :
+                              message.sentiment === '负向' ? styles.colors.error : 
+                              styles.colors.warning,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'white',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    marginLeft: '8px',
+                    fontSize: styles.typography.micro.fontSize,
+                    fontWeight: styles.typography.body.fontWeight,
+                    marginLeft: styles.spacing.sm,
                     order: 2,
                     flexShrink: 0
                   }} title={message.sentiment}>
@@ -538,57 +619,57 @@ const ConversationAnalysis: React.FC = () => {
         <div style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: 16,
+          gap: styles.spacing.lg,
           height: '100%'
         }}>
           {/* 互动分析 */}
           <div style={{
-            background: '#fff',
-            borderRadius: 8,
-            padding: 16,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: styles.colors.background.light,
+            borderRadius: styles.borderRadius.md,
+            padding: styles.spacing.md,
+            boxShadow: styles.shadows.primary,
             flexShrink: 0
           }}>
             <SectionTitle title="互动分析" />
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 12
+              gap: styles.spacing.sm
             }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ 
-                  fontSize: 24, 
-                  fontWeight: 600, 
-                  color: '#1677ff',
-                  marginBottom: 4
+                  fontSize: styles.typography.h1.fontSize, 
+                  fontWeight: styles.typography.h1.fontWeight, 
+                  color: styles.colors.primary,
+                  marginBottom: styles.spacing.sm
                 }}>{conversation.interactionAnalysis.totalMessages}</div>
                 <div style={{ 
-                  fontSize: 13,
-                  color: '#666'
+                  fontSize: styles.typography.small.fontSize,
+                  color: styles.colors.text.tertiary
                 }}>互动消息数</div>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ 
-                  fontSize: 24, 
-                  fontWeight: 600, 
-                  color: '#1677ff',
-                  marginBottom: 4
+                  fontSize: styles.typography.h1.fontSize, 
+                  fontWeight: styles.typography.h1.fontWeight, 
+                  color: styles.colors.primary,
+                  marginBottom: styles.spacing.sm
                 }}>{conversation.interactionAnalysis.agentMessages}</div>
                 <div style={{ 
-                  fontSize: 13,
-                  color: '#666'
+                  fontSize: styles.typography.small.fontSize,
+                  color: styles.colors.text.tertiary
                 }}>客服消息数</div>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ 
-                  fontSize: 24, 
-                  fontWeight: 600, 
-                  color: '#1677ff',
-                  marginBottom: 4
+                  fontSize: styles.typography.h1.fontSize, 
+                  fontWeight: styles.typography.h1.fontWeight, 
+                  color: styles.colors.primary,
+                  marginBottom: styles.spacing.sm
                 }}>{conversation.interactionAnalysis.userMessages}</div>
                 <div style={{ 
-                  fontSize: 13,
-                  color: '#666'
+                  fontSize: styles.typography.small.fontSize,
+                  color: styles.colors.text.tertiary
                 }}>用户消息数</div>
               </div>
             </div>
@@ -596,46 +677,46 @@ const ConversationAnalysis: React.FC = () => {
 
           {/* 会话分析 */}
           <div style={{
-            background: '#fff',
-            borderRadius: 8,
-            padding: 16,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: styles.colors.background.light,
+            borderRadius: styles.borderRadius.md,
+            padding: styles.spacing.md,
+            boxShadow: styles.shadows.primary,
             flexShrink: 0
           }}>
             <SectionTitle title="会话分析" />
             
             {/* 命中标签 */}
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: styles.spacing.md }}>
               <div style={{ 
-                fontSize: 13,
-                marginBottom: 8,
-                fontWeight: 600,
-                color: '#1f1f1f'
+                fontSize: styles.typography.small.fontSize,
+                marginBottom: styles.spacing.sm,
+                fontWeight: styles.typography.body.fontWeight,
+                color: styles.colors.text.primary
               }}>命中标签</div>
               
               <div style={{ 
                 display: 'flex', 
-                gap: 8, 
+                gap: styles.spacing.sm, 
                 flexWrap: 'wrap',
-                marginBottom: 8
+                marginBottom: styles.spacing.sm
               }}>
                 {conversation.tags && conversation.tags.map((tag: string, index: number) => (
                   <span key={index} style={{
-                    padding: '4px 8px',
-                    borderRadius: 12,
-                    background: index === 0 ? 'rgba(22, 119, 255, 0.1)' : 
-                              index === 1 ? 'rgba(250, 140, 22, 0.1)' : 
-                              'rgba(82, 196, 26, 0.1)',
-                    color: index === 0 ? '#1677ff' : 
-                          index === 1 ? '#fa8c16' : 
-                          '#52c41a',
-                    fontSize: 12,
-                    fontWeight: 500,
+                    padding: styles.spacing.xs,
+                    borderRadius: styles.borderRadius.sm,
+                    background: index === 0 ? styles.colors.background.primaryLight : 
+                              index === 1 ? styles.colors.background.warningLight : 
+                              styles.colors.background.successLight,
+                    color: index === 0 ? styles.colors.primary : 
+                          index === 1 ? styles.colors.warning : 
+                          styles.colors.success,
+                    fontSize: styles.typography.small.fontSize,
+                    fontWeight: styles.typography.body.fontWeight,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 4
+                    gap: styles.spacing.xs
                   }}>
-                    <TagOutlined style={{ fontSize: 10 }} />
+                    <TagOutlined style={{ fontSize: styles.typography.micro.fontSize }} />
                     {tag}
                   </span>
                 ))}
@@ -643,17 +724,17 @@ const ConversationAnalysis: React.FC = () => {
             </div>
             
             {/* 情绪总结 */}
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: styles.spacing.md }}>
               <div style={{ 
-                fontSize: 13,
-                marginBottom: 8,
-                fontWeight: 600,
-                color: '#1f1f1f'
+                fontSize: styles.typography.small.fontSize,
+                marginBottom: styles.spacing.sm,
+                fontWeight: styles.typography.body.fontWeight,
+                color: styles.colors.text.primary
               }}>情绪总结</div>
               
               <div style={{ 
                 display: 'flex', 
-                gap: 8, 
+                gap: styles.spacing.sm, 
                 flexWrap: 'wrap'
               }}>
                 {(() => {
@@ -676,15 +757,15 @@ const ConversationAnalysis: React.FC = () => {
                     <>
                       {sentimentCounts['正向'] > 0 && (
                         <span style={{
-                          padding: '4px 8px',
-                          borderRadius: 12,
-                          background: 'rgba(82, 196, 26, 0.1)',
-                          color: '#52c41a',
-                          fontSize: 12,
-                          fontWeight: 500,
+                          padding: styles.spacing.xs,
+                          borderRadius: styles.borderRadius.sm,
+                          background: styles.colors.background.successLight,
+                          color: styles.colors.success,
+                          fontSize: styles.typography.small.fontSize,
+                          fontWeight: styles.typography.body.fontWeight,
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 4
+                          gap: styles.spacing.xs
                         }}>
                           正向 × {sentimentCounts['正向']}
                         </span>
@@ -692,15 +773,15 @@ const ConversationAnalysis: React.FC = () => {
                       
                       {sentimentCounts['中立'] > 0 && (
                         <span style={{
-                          padding: '4px 8px',
-                          borderRadius: 12,
-                          background: 'rgba(250, 173, 20, 0.1)',
-                          color: '#faad14',
-                          fontSize: 12,
-                          fontWeight: 500,
+                          padding: styles.spacing.xs,
+                          borderRadius: styles.borderRadius.sm,
+                          background: styles.colors.background.warningLight,
+                          color: styles.colors.warning,
+                          fontSize: styles.typography.small.fontSize,
+                          fontWeight: styles.typography.body.fontWeight,
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 4
+                          gap: styles.spacing.xs
                         }}>
                           中立 × {sentimentCounts['中立']}
                         </span>
@@ -708,15 +789,15 @@ const ConversationAnalysis: React.FC = () => {
                       
                       {sentimentCounts['负向'] > 0 && (
                         <span style={{
-                          padding: '4px 8px',
-                          borderRadius: 12,
-                          background: 'rgba(255, 77, 79, 0.1)',
-                          color: '#ff4d4f',
-                          fontSize: 12,
-                          fontWeight: 500,
+                          padding: styles.spacing.xs,
+                          borderRadius: styles.borderRadius.sm,
+                          background: styles.colors.background.errorLight,
+                          color: styles.colors.error,
+                          fontSize: styles.typography.small.fontSize,
+                          fontWeight: styles.typography.body.fontWeight,
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 4
+                          gap: styles.spacing.xs
                         }}>
                           负向 × {sentimentCounts['负向']}
                         </span>
@@ -730,25 +811,25 @@ const ConversationAnalysis: React.FC = () => {
             {/* 热词 */}
             <div>
               <div style={{ 
-                fontSize: 13,
-                marginBottom: 8,
-                fontWeight: 600,
-                color: '#1f1f1f'
+                fontSize: styles.typography.small.fontSize,
+                marginBottom: styles.spacing.sm,
+                fontWeight: styles.typography.body.fontWeight,
+                color: styles.colors.text.primary
               }}>热词</div>
               
               <div style={{ 
                 display: 'flex', 
-                gap: 8, 
+                gap: styles.spacing.sm, 
                 flexWrap: 'wrap'
               }}>
                 {conversation.hotWords && conversation.hotWords.map((word: string, index: number) => (
                   <span key={index} style={{
-                    padding: '4px 8px',
-                    borderRadius: 4,
-                    background: '#fff',
-                    border: '1px solid #d9d9d9',
-                    color: '#595959',
-                    fontSize: 12
+                    padding: styles.spacing.xs,
+                    borderRadius: styles.borderRadius.sm,
+                    background: styles.colors.background.light,
+                    border: `1px solid ${styles.colors.border}`,
+                    color: styles.colors.text.secondary,
+                    fontSize: styles.typography.small.fontSize
                   }}>
                     {word}
                   </span>
@@ -759,10 +840,10 @@ const ConversationAnalysis: React.FC = () => {
 
           {/* 改进建议 */}
           <div style={{
-            background: '#fff',
-            borderRadius: 8,
-            padding: 16,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: styles.colors.background.light,
+            borderRadius: styles.borderRadius.md,
+            padding: styles.spacing.md,
+            boxShadow: styles.shadows.primary,
             flex: 1,
             display: 'flex',
             flexDirection: 'column'
@@ -774,22 +855,22 @@ const ConversationAnalysis: React.FC = () => {
               margin: 0,
               display: 'flex',
               flexDirection: 'column',
-              gap: 12,
+              gap: styles.spacing.sm,
               flex: 1
             }}>
               {conversation.improvementSuggestions.map((suggestion, index) => (
                 <li key={index} style={{ 
-                  padding: 8,
-                  background: '#fffbe6',
-                  borderRadius: 4,
-                  fontSize: 14
+                  padding: styles.spacing.sm,
+                  background: styles.colors.background.warningLight,
+                  borderRadius: styles.borderRadius.sm,
+                  fontSize: styles.typography.body.fontSize
                 }}>{suggestion}</li>
               ))}
             </ul>
             <div style={{ 
-              marginTop: 12,
-              color: 'var(--grey-500)',
-              fontSize: '0.75rem',
+              marginTop: styles.spacing.sm,
+              color: styles.colors.text.tertiary,
+              fontSize: styles.typography.micro.fontSize,
               fontStyle: 'italic',
               textAlign: 'right'
             }}>AI建议仅供参考</div>
