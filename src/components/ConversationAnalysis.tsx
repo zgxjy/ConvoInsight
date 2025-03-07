@@ -3,7 +3,6 @@ import { TagOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Spin, Result, Empty } from 'antd';
 import { 
-  JourneyStep, 
   Message,
   ConversationData
 } from '../types/conversationTypes';
@@ -120,7 +119,7 @@ const ConversationAnalysis: React.FC = () => {
 
   // 确保所有必需的数据都存在
   if (!conversation.customerInfo || !conversation.conversationSummary || 
-      !conversation.metrics || !conversation.journey || !conversation.messages) {
+      !conversation.metrics || !conversation.messages) {
     return (
       <div style={{
         background: '#fff',
@@ -442,120 +441,100 @@ const ConversationAnalysis: React.FC = () => {
         </div>
       </div>
 
-      {/* 客户旅程 */}
-      <div style={{
-        background: '#fff',
-        borderRadius: 8,
-        padding: 16,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-      }}>
-        <SectionTitle title="客户旅程" />
-        <div style={{ 
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 24,
-          position: 'relative',
-          overflowX: 'auto',
-          padding: '20px 0'
-        }}>
-          {conversation.journey.steps.map((step: JourneyStep, index: number) => (
-            <div key={step.id} style={{ 
-              position: 'relative',
-              minWidth: '280px'
-            }}>
-              {/* 时间线节点和连接线 */}
-              <div style={{
-                position: 'absolute',
-                top: -12,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 24,
-                height: 24,
-                borderRadius: '50%',
-                background: step.status === 'completed' ? '#52c41a' : '#1677ff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontSize: 12,
-                zIndex: 2
-              }}>
-                {index + 1}
-              </div>
-              
-              {/* 连接线 */}
-              {index < conversation.journey.steps.length - 1 && (
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '50%',
-                  width: '100%',
-                  height: 2,
-                  background: '#f0f0f0',
-                  zIndex: 1
-                }} />
-              )}
-              
-              {/* 内容区块 */}
-              <div style={{ 
-                background: step.type === 'customer' ? '#f6ffed' : '#f0f5ff',
-                borderRadius: 8,
-                padding: 16,
-                marginTop: 24
-              }}>
-                <div style={{ 
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: 8
-                }}>
-                  <div style={{ color: step.type === 'customer' ? '#52c41a' : '#1677ff' }}>
-                    {step.layer === 1 ? '意图识别' : 
-                     step.layer === 2 ? '解决方案' : '情绪识别'}
-                  </div>
-                  <div style={{ color: '#8c8c8c', fontSize: 12 }}>{step.time}</div>
-                </div>
-                <div style={{ 
-                  fontWeight: 500,
-                  marginBottom: 8,
-                  color: '#1f1f1f'
-                }}>{step.title}</div>
-                <div style={{ 
-                  color: '#434343',
-                  lineHeight: 1.6,
-                  marginBottom: 12,
-                  fontSize: 13
-                }}>{step.details}</div>
-                
-                {/* 情绪状态 */}
-                {step.emotionLabel && (
-                  <div style={{ 
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    color: '#8c8c8c',
-                    fontSize: 12
-                  }}>
-                    <span>{
-                      step.emotionLabel === 'happy' ? '😊 开心' :
-                      step.emotionLabel === 'satisfied' ? '🙂 满意' :
-                      step.emotionLabel === 'neutral' ? '😐 平静' :
-                      step.emotionLabel === 'worried' ? '😟 担忧' : '😞 失望'
-                    }</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* 底部区块 */}
       <div style={{ 
         display: 'grid',
-        gridTemplateColumns: '280px 1fr',
+        gridTemplateColumns: '1fr 380px',
         gap: 24
       }}>
-        {/* 左侧分析区域 */}
+        {/* 左侧对话记录 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: 8,
+          padding: 16,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 16
+          }}>
+            <SectionTitle title="对话记录" />
+          </div>
+          <div style={{ 
+            maxHeight: '60vh',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12
+          }}>
+            {conversation.messages.map((message: Message, index: number) => (
+              <div key={index} style={{ 
+                alignSelf: message.type === 'system' ? 'center' : 
+                          message.type === 'user' ? 'flex-start' : 'flex-end',
+                maxWidth: message.type === 'system' ? '90%' : '80%',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                width: message.type === 'system' ? 'auto' : '100%',
+                justifyContent: message.type === 'system' ? 'center' : 
+                               message.type === 'user' ? 'flex-start' : 'flex-end'
+              }}>
+                <div style={{ 
+                  background: message.type === 'system' ? '#f0f0f0' :
+                              message.type === 'user' ? '#e6ffed' : '#e6f7ff',
+                  borderRadius: 8,
+                  padding: 12,
+                  position: 'relative',
+                  textAlign: message.type === 'system' ? 'center' : 'left',
+                  order: message.type === 'user' ? 1 : 0,
+                  maxWidth: message.type === 'user' ? 'calc(100% - 40px)' : '100%'
+                }}>
+                  {message.content.split('\n').map((line: string, i: number) => (
+                    <React.Fragment key={i}>
+                      {line}
+                      {i < message.content.split('\n').length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                  <div style={{
+                    fontSize: 12,
+                    color: '#8c8c8c',
+                    marginTop: 8,
+                    textAlign: 'left'
+                  }}>
+                    {message.time} • {message.type === 'user' ? '用户' : 
+                                      message.type === 'system' ? '系统' : '客服'}
+                  </div>
+                </div>
+                {/* 用户消息情感标记 - 放在对话框外侧 */}
+                {message.type === 'user' && message.sentiment && (
+                  <div style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    background: message.sentiment === '正向' ? '#52c41a' : 
+                              message.sentiment === '负向' ? '#ff4d4f' : '#faad14',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    marginLeft: '8px',
+                    order: 2,
+                    flexShrink: 0
+                  }} title={message.sentiment}>
+                    {message.sentiment === '正向' ? '正' : 
+                     message.sentiment === '负向' ? '负' : '中'}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 右侧分析区域 */}
         <div style={{
           display: 'flex',
           flexDirection: 'column',
@@ -606,11 +585,174 @@ const ConversationAnalysis: React.FC = () => {
                   fontWeight: 600, 
                   color: '#1677ff',
                   marginBottom: 4
-                }}>{conversation.interactionAnalysis.imageMessages}</div>
+                }}>{conversation.interactionAnalysis.userMessages}</div>
                 <div style={{ 
                   fontSize: 13,
                   color: '#666'
-                }}>图片消息数</div>
+                }}>用户消息数</div>
+              </div>
+            </div>
+          </div>
+
+          {/* 会话分析 */}
+          <div style={{
+            background: '#fff',
+            borderRadius: 8,
+            padding: 16,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            flexShrink: 0
+          }}>
+            <SectionTitle title="会话分析" />
+            
+            {/* 命中标签 */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ 
+                fontSize: 13,
+                marginBottom: 8,
+                fontWeight: 600,
+                color: '#1f1f1f'
+              }}>命中标签</div>
+              
+              <div style={{ 
+                display: 'flex', 
+                gap: 8, 
+                flexWrap: 'wrap',
+                marginBottom: 8
+              }}>
+                {conversation.tags && conversation.tags.map((tag: string, index: number) => (
+                  <span key={index} style={{
+                    padding: '4px 8px',
+                    borderRadius: 12,
+                    background: index === 0 ? 'rgba(22, 119, 255, 0.1)' : 
+                              index === 1 ? 'rgba(250, 140, 22, 0.1)' : 
+                              'rgba(82, 196, 26, 0.1)',
+                    color: index === 0 ? '#1677ff' : 
+                          index === 1 ? '#fa8c16' : 
+                          '#52c41a',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}>
+                    <TagOutlined style={{ fontSize: 10 }} />
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            {/* 情绪总结 */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ 
+                fontSize: 13,
+                marginBottom: 8,
+                fontWeight: 600,
+                color: '#1f1f1f'
+              }}>情绪总结</div>
+              
+              <div style={{ 
+                display: 'flex', 
+                gap: 8, 
+                flexWrap: 'wrap'
+              }}>
+                {(() => {
+                  // 统计各种情绪的数量
+                  const sentimentCounts = {
+                    '正向': 0,
+                    '中立': 0,
+                    '负向': 0
+                  };
+                  
+                  // 遍历所有用户消息并统计情绪
+                  conversation.messages.forEach(msg => {
+                    if (msg.type === 'user' && msg.sentiment) {
+                      sentimentCounts[msg.sentiment]++;
+                    }
+                  });
+                  
+                  // 返回情绪统计标签
+                  return (
+                    <>
+                      {sentimentCounts['正向'] > 0 && (
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: 12,
+                          background: 'rgba(82, 196, 26, 0.1)',
+                          color: '#52c41a',
+                          fontSize: 12,
+                          fontWeight: 500,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4
+                        }}>
+                          正向 × {sentimentCounts['正向']}
+                        </span>
+                      )}
+                      
+                      {sentimentCounts['中立'] > 0 && (
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: 12,
+                          background: 'rgba(250, 173, 20, 0.1)',
+                          color: '#faad14',
+                          fontSize: 12,
+                          fontWeight: 500,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4
+                        }}>
+                          中立 × {sentimentCounts['中立']}
+                        </span>
+                      )}
+                      
+                      {sentimentCounts['负向'] > 0 && (
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: 12,
+                          background: 'rgba(255, 77, 79, 0.1)',
+                          color: '#ff4d4f',
+                          fontSize: 12,
+                          fontWeight: 500,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4
+                        }}>
+                          负向 × {sentimentCounts['负向']}
+                        </span>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+            
+            {/* 热词 */}
+            <div>
+              <div style={{ 
+                fontSize: 13,
+                marginBottom: 8,
+                fontWeight: 600,
+                color: '#1f1f1f'
+              }}>热词</div>
+              
+              <div style={{ 
+                display: 'flex', 
+                gap: 8, 
+                flexWrap: 'wrap'
+              }}>
+                {conversation.hotWords && conversation.hotWords.map((word: string, index: number) => (
+                  <span key={index} style={{
+                    padding: '4px 8px',
+                    borderRadius: 4,
+                    background: '#fff',
+                    border: '1px solid #d9d9d9',
+                    color: '#595959',
+                    fontSize: 12
+                  }}>
+                    {word}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -645,68 +787,12 @@ const ConversationAnalysis: React.FC = () => {
               ))}
             </ul>
             <div style={{ 
-              marginTop: 16,
-              color: '#8c8c8c',
-              fontSize: 12,
+              marginTop: 12,
+              color: 'var(--grey-500)',
+              fontSize: '0.75rem',
+              fontStyle: 'italic',
               textAlign: 'right'
             }}>AI建议仅供参考</div>
-          </div>
-        </div>
-
-        {/* 对话记录 */}
-        <div style={{
-          background: '#fff',
-          borderRadius: 8,
-          padding: 16,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ 
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16
-          }}>
-            <SectionTitle title="对话记录" />
-          </div>
-          <div style={{ 
-            maxHeight: '60vh',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 12
-          }}>
-            {conversation.messages.map((message: Message, index: number) => (
-              <div key={index} style={{ 
-                alignSelf: message.type === 'system' ? 'center' : 
-                          message.type === 'user' ? 'flex-end' : 'flex-start',
-                maxWidth: message.type === 'system' ? '90%' : '80%'
-              }}>
-                <div style={{ 
-                  background: message.type === 'system' ? '#f0f0f0' :
-                              message.type === 'user' ? '#e6ffed' : '#e6f7ff',
-                  borderRadius: 8,
-                  padding: 12,
-                  position: 'relative',
-                  textAlign: message.type === 'system' ? 'center' : 'left'
-                }}>
-                  {message.content.split('\n').map((line: string, i: number) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < message.content.split('\n').length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
-                  <div style={{
-                    fontSize: 12,
-                    color: '#8c8c8c',
-                    marginTop: 8,
-                    textAlign: 'left'
-                  }}>
-                    {message.time} • {message.type === 'user' ? '用户' : 
-                                      message.type === 'system' ? '系统' : '客服'}
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>

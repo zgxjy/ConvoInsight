@@ -12,76 +12,6 @@ export const conversationData: ConversationData = {
     attitude: { value: 95, trend: 0, status: "equal" },
     risk: { value: 20, trend: 8, status: "up" }
   },
-  journey: {
-    steps: [
-      {
-        id: 1,
-        title: "意图识别",
-        time: "16:43",
-        status: "completed",
-        details: "用户希望恢复误删除的视频文件",
-        layer: 1,
-        type: "customer",
-        emotion: 0, // 平静
-        emotionLabel: "neutral" // 平静
-      },
-      {
-        id: 2,
-        title: "场景确认",
-        time: "16:45",
-        status: "completed",
-        details: "在iOS App编辑时误删，通过闪传助手连接",
-        layer: 1,
-        type: "customer",
-        emotion: -1, // 轻微焦虑
-        emotionLabel: "worried" // 担忧
-      },
-      {
-        id: 3,
-        title: "解决方案",
-        time: "16:47",
-        status: "completed",
-        details: "说明文件删除的两种情况及对应处理方法",
-        layer: 2,
-        type: "service",
-        emotion: -1,
-        emotionLabel: "worried" // 担忧
-      },
-      {
-        id: 4,
-        title: "方案补充",
-        time: "16:50",
-        status: "completed",
-        details: "建议使用第三方恢复软件",
-        layer: 2,
-        type: "service",
-        emotion: -2,
-        emotionLabel: "sad" // 失望
-      },
-      {
-        id: 5,
-        title: "情绪变化",
-        time: "16:51",
-        status: "completed",
-        details: "用户表现失望",
-        layer: 3,
-        type: "customer",
-        emotion: -2,
-        emotionLabel: "sad" // 失望
-      },
-      {
-        id: 6,
-        title: "安抚跟进",
-        time: "16:52",
-        status: "completed",
-        details: "承诺反馈问题并提供预防建议",
-        layer: 3,
-        type: "service",
-        emotion: -1,
-        emotionLabel: "worried" // 担忧
-      }
-    ]
-  },
   customerInfo: {
     userId: "827822984@qq.com",
     device: "Insta360 X4",
@@ -116,8 +46,9 @@ export const conversationData: ConversationData = {
     "考虑添加自动备份功能建议"
   ],
   interactionAnalysis: {
-    totalMessages: 16,
-    agentMessages: 13,
-    imageMessages: 0
-  }
+    totalMessages: 8,
+    agentMessages: 5,
+    userMessages: 3
+  },
+  hotWords: ['InstaX4', '文件恢复', '第三方软件']
 };

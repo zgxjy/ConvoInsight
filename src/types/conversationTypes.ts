@@ -11,23 +11,13 @@ export interface Metrics {
   risk: Metric;           // 服务风险性
 }
 
-export interface JourneyStep {
-  id: number;
-  title: string;
-  time: string;
-  status: 'completed' | 'pending';
-  details: string;
-  layer: number;
-  type: 'customer' | 'service';
-  emotion: number;
-  emotionLabel: 'happy' | 'satisfied' | 'neutral' | 'worried' | 'sad';
-}
 
 export interface Message {
   type: 'system' | 'agent' | 'user';
   content: string;
   time: string;
   sender?: string;
+  sentiment?: '正向' | '中立' | '负向';
 }
 
 export interface CustomerInfo {
@@ -50,7 +40,7 @@ export interface ConversationSummary {
 export interface InteractionAnalysis {
   totalMessages: number;
   agentMessages: number;
-  imageMessages: number;
+  userMessages: number;
 }
 
 export interface ConversationData {
@@ -58,9 +48,6 @@ export interface ConversationData {
   time: string;
   agent: string;
   metrics: Metrics;
-  journey: {
-    steps: JourneyStep[];
-  };
   customerInfo: CustomerInfo;
   summary: string;
   conversationSummary: ConversationSummary;
@@ -68,6 +55,12 @@ export interface ConversationData {
   messages: Message[];
   improvementSuggestions: string[];
   interactionAnalysis: InteractionAnalysis;
+  emotionSummary?: {
+    positive: number;
+    neutral: number;
+    negative: number;
+  };
+  hotWords?: string[];
 }
 
 // 列表页面使用的简化会话数据类型
@@ -109,3 +102,4 @@ export interface PaginatedResponse<T> {
   items: T[];
   pagination: PaginationData;
 }
+
