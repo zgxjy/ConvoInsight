@@ -10,18 +10,6 @@ import axios from 'axios';
 // API基础URL
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// 将完整会话数据转换为列表项数据
-const convertToListItem = (conversation: ConversationData): ConversationListItem => ({
-  id: conversation.id || '',
-  time: conversation.time || '',
-  agent: conversation.agent || '',
-  customerId: conversation.customerInfo?.userId || '未知用户',
-  mainIssue: conversation.conversationSummary?.mainIssue || '未分类问题',
-  resolutionStatus: conversation.conversationSummary?.resolutionStatus?.status || '未解决',
-  tags: conversation.tags || [],
-  satisfaction: conversation.metrics?.satisfaction?.value || 0
-});
-
 // 获取会话列表的API
 export const fetchConversationList = async (
   page: number = 1, 

@@ -49,13 +49,7 @@ const ConversationTable: React.FC<ConversationTableProps> = ({
       title: '客户ID',
       dataIndex: 'customerId',
       key: 'customerId',
-      width: 180,
-      ellipsis: true,
-    },
-    {
-      title: '主要问题',
-      dataIndex: 'mainIssue',
-      key: 'mainIssue',
+      width: 120,
       ellipsis: true,
     },
     {
@@ -93,15 +87,22 @@ const ConversationTable: React.FC<ConversationTableProps> = ({
       title: '标签',
       key: 'tags',
       dataIndex: 'tags',
-      width: 220,
+      width: 360,
       render: (tags: string[]) => (
-        <Space size={[0, 4]} wrap>
+        <Space size={[0, 8]} wrap>
           {tags.map((tag, index) => (
             <Tag 
               key={index}
               color={index % 3 === 0 ? "blue" : index % 3 === 1 ? "orange" : "green"}
               icon={<TagOutlined />}
-              style={{ marginRight: 0 }}
+              style={{ 
+                marginRight: 0,
+                maxWidth: '300px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+              title={tag} // 添加title属性，鼠标悬停时显示完整标签
             >
               {tag}
             </Tag>

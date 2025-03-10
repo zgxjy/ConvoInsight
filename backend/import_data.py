@@ -35,37 +35,16 @@ def import_data_to_mongodb(connection_string=None, db_name=None):
         print(f"使用数据库: {db_name}")
         db = client[db_name]
         
-        # 读取会话列表数据
-        with open('conversation_list.json', 'r', encoding='utf-8') as f:
-            conversation_list = json.load(f)
-        
         # 读取会话详情数据
         with open('conversation_detail.json', 'r', encoding='utf-8') as f:
             conversation_detail = json.load(f)
         
         # 创建集合
         conversations_collection = db['conversations']  # 会话详情集合
-        conversation_list_collection = db['conversation_list']  # 会话列表集合
         
         # 清空现有数据（可选，取消注释以启用）
         # conversations_collection.delete_many({})
-        # conversation_list_collection.delete_many({})
-        
-        # 导入会话列表数据
-        print("导入会话列表数据...")
-        try:
-            # 尝试插入一个测试文档以检查权限
-            test_result = db.test_collection.insert_one({"test": "permission_check"})
-            db.test_collection.delete_one({"_id": test_result.inserted_id})
-            print("数据库写入权限检查通过")
-            
-            # 批量插入会话列表数据
-            conversation_list_collection.delete_many({})  # 清空现有数据
-            conversation_list_collection.insert_many(conversation_list)
-            print(f"成功导入 {len(conversation_list)} 条会话列表数据")
-        except Exception as e:
-            print(f"导入会话列表数据出错: {str(e)}")
-            return False
+
         
         # 导入会话详情数据
         print("\n导入会话详情数据...")
@@ -90,7 +69,6 @@ def import_data_to_mongodb(connection_string=None, db_name=None):
         
         # 打印导入的数据摘要
         print("\n导入数据摘要:")
-        print(f"- 会话列表: {len(conversation_list)} 条记录")
         print(f"- 会话详情: ID={conversation_detail['id']}")
         
         return True
@@ -178,19 +156,12 @@ if __name__ == '__main__':
     print(f"当前工作目录: {current_dir}")
     
     # 检查文件是否存在
-    list_file = os.path.join(current_dir, 'conversation_list.json')
     detail_file = os.path.join(current_dir, 'conversation_detail.json')
-    
-    if not os.path.exists(list_file):
-        print(f"错误: 找不到会话列表文件 {list_file}")
-        sys.exit(1)
-    
     if not os.path.exists(detail_file):
         print(f"错误: 找不到会话详情文件 {detail_file}")
         sys.exit(1)
     
     print("找到所需的JSON文件:")
-    print(f"- {list_file}")
     print(f"- {detail_file}")
     
     # 设置连接选项

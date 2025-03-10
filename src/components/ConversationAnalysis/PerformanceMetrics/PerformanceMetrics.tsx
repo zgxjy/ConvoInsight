@@ -48,7 +48,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ label, value, description }) =>
 
 /**
  * 客服表现评估组件
- * 展示客户满意度、专业能力、解决能力和礼貌表现等指标
+ * 展示客户满意度、解决能力和礼貌表现、安全程度指标
  */
 const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
   satisfaction,
@@ -66,17 +66,17 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
           description={satisfaction.description} 
         />
         <MetricCard 
-          label="专业能力" 
+          label="解决能力" 
           value={resolution.value} 
           description={resolution.description} 
         />
         <MetricCard 
-          label="解决能力" 
+          label="礼貌表现" 
           value={attitude.value} 
           description={attitude.description} 
         />
         <MetricCard 
-          label="礼貌表现" 
+          label="安全程度" 
           value={risk.value} 
           description={risk.description} 
         />
