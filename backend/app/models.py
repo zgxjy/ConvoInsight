@@ -27,19 +27,6 @@ class CustomerInfo(BaseModel):
     device: str
     history: str
 
-class JourneyStep(BaseModel):
-    id: int
-    title: str
-    time: str
-    status: str
-    details: str
-    layer: int
-    type: str
-    emotion: int
-    emotionLabel: str
-
-class Journey(BaseModel):
-    steps: List[JourneyStep]
 
 class Message(BaseModel):
     type: str
@@ -58,7 +45,6 @@ class ConversationData(BaseModel):
     time: str
     agent: str
     metrics: Metrics
-    journey: Journey
     customerInfo: CustomerInfo
     conversationSummary: ConversationSummary
     tags: List[str]

@@ -12,13 +12,14 @@ const API_BASE_URL = 'http://localhost:5000/api';
 
 // 将完整会话数据转换为列表项数据
 const convertToListItem = (conversation: ConversationData): ConversationListItem => ({
-  id: conversation.id,
-  time: conversation.time,
-  agent: conversation.agent,
-  customerId: conversation.customerInfo.userId,
-  mainIssue: conversation.conversationSummary.mainIssue,
-  resolutionStatus: conversation.conversationSummary.resolutionStatus.status,
-  tags: conversation.tags
+  id: conversation.id || '',
+  time: conversation.time || '',
+  agent: conversation.agent || '',
+  customerId: conversation.customerInfo?.userId || '未知用户',
+  mainIssue: conversation.conversationSummary?.mainIssue || '未分类问题',
+  resolutionStatus: conversation.conversationSummary?.resolutionStatus?.status || '未解决',
+  tags: conversation.tags || [],
+  satisfaction: conversation.metrics?.satisfaction?.value || 0
 });
 
 // 获取会话列表的API
@@ -58,6 +59,12 @@ export const fetchConversationList = async (
     
     // 发送请求
     const response = await axios.get(`${API_BASE_URL}/conversations`, { params });
+    
+    // 如果成功，直接使用后端返回的列表项数据
+    if (response.data.success) {
+      return response.data;
+    }
+    
     return response.data;
   } catch (error) {
     console.error('获取会话列表出错:', error);

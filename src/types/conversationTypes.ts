@@ -72,6 +72,7 @@ export interface ConversationListItem {
   mainIssue: string;
   resolutionStatus: string;
   tags: string[];
+  satisfaction: number; // 客户满意度分数
 }
 
 // 分页数据结构

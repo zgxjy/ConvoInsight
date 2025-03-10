@@ -101,15 +101,17 @@ def get_conversations():
         # 转换为列表项
         items = []
         for doc in cursor:
+            # 确保所有必要字段都存在
             # 转换为列表项格式
             list_item = {
-                'id': doc['id'],
-                'time': doc['time'],
-                'agent': doc['agent'],
-                'customerId': doc['customerInfo']['userId'],
-                'mainIssue': doc['conversationSummary']['mainIssue'],
-                'resolutionStatus': doc['conversationSummary']['resolutionStatus']['status'],
-                'tags': doc['tags']
+                'id': doc.get('id', ''),
+                'time': doc.get('time', ''),
+                'agent': doc.get('agent', ''),
+                'customerId': doc.get('customerInfo', {}).get('userId', '未知用户'),
+                'mainIssue': doc.get('conversationSummary', {}).get('mainIssue', '未分类问题'),
+                'resolutionStatus': doc.get('conversationSummary', {}).get('resolutionStatus', {}).get('status', '未解决'),
+                'tags': doc.get('tags', []),
+                'satisfaction': doc.get('metrics', {}).get('satisfaction', {}).get('value', 0)
             }
             items.append(list_item)
         
