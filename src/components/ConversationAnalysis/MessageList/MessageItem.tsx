@@ -19,7 +19,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
       position: 'relative',
       display: 'flex',
       alignItems: 'center',
-      width: message.type === 'system' ? 'auto' : '100%',
+      width: 'auto', 
       justifyContent: message.type === 'system' ? 'center' : 
                      message.type === 'user' ? 'flex-start' : 'flex-end'
     }}>
@@ -32,7 +32,11 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         position: 'relative',
         textAlign: message.type === 'system' ? 'center' : 'left',
         order: message.type === 'user' ? 1 : 0,
-        maxWidth: message.type === 'user' ? 'calc(100% - 40px)' : '100%'
+        maxWidth: '100%', 
+        wordWrap: 'break-word', 
+        wordBreak: 'break-word', 
+        overflowWrap: 'break-word', 
+        whiteSpace: 'pre-wrap', 
       }}>
         {message.content.split('\n').map((line: string, i: number) => (
           <React.Fragment key={i}>

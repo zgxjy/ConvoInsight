@@ -29,7 +29,10 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: styles.spacing.sm
+        gap: styles.spacing.sm,
+        width: '100%', // 确保宽度一致
+        minWidth: 0, // 防止子元素撑开容器
+        overflowX: 'hidden' // 防止水平滚动
       }}>
         {messages.map((message, index) => (
           <MessageItem key={index} message={message} />

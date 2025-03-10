@@ -45,6 +45,7 @@ const ConversationList: React.FC = () => {
         setPagination({
           ...pagination,
           current: response.data.pagination.current,
+          pageSize: response.data.pagination.pageSize,
           total: response.data.pagination.total,
         });
       } else {
