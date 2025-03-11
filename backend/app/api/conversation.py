@@ -23,7 +23,7 @@ def get_conversations():
         searchText (str): 搜索文本，用于搜索会话ID、客户ID或主要问题
         agent (str): 客服名称
         resolutionStatus (str): 解决状态
-        tag (str): 标签
+        tags (str): 标签，多个标签使用逗号分隔
         timeStart (str): 开始时间
         timeEnd (str): 结束时间
         
@@ -53,7 +53,7 @@ def get_conversations():
         status = request.args.get('resolutionStatus')
         time_start = request.args.get('timeStart')
         time_end = request.args.get('timeEnd')
-        tag = request.args.get('tag')
+        tags = request.args.get('tags')
         
         # 构建查询条件
         query = {}
@@ -79,8 +79,15 @@ def get_conversations():
             query['conversationSummary.resolutionStatus.status'] = status
         
         # 标签筛选
-        if tag:
-            query['tags'] = tag
+        if tags:
+            # 处理逗号分隔的多标签
+            tag_list = tags.split(',')
+            if len(tag_list) == 1:
+                # 单个标签
+                query['tags'] = tag_list[0]
+            else:
+                # 多个标签 - 使用$in操作符
+                query['tags'] = {'$in': tag_list}
         
         # 时间范围筛选
         if time_start or time_end:

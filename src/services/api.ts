@@ -35,8 +35,9 @@ export const fetchConversationList = async (
         params.append('resolutionStatus', filters.resolutionStatus);
       }
       
-      if (filters.tag) {
-        params.append('tag', filters.tag);
+      if (filters.tags && filters.tags.length > 0) {
+        // 处理多标签筛选 - 将多个标签合并为一个逗号分隔的字符串
+        params.append('tags', filters.tags.join(','));
       }
       
       if (filters.timeRange && filters.timeRange.length === 2) {

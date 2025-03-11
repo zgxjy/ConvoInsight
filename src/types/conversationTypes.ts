@@ -87,7 +87,7 @@ export interface FilterParams {
   timeRange?: [string, string];
   agent?: string;
   resolutionStatus?: string;
-  tag?: string;
+  tags?: string[];
   searchText?: string;
 }
 

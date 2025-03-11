@@ -1,5 +1,5 @@
-import React from 'react';
-import { Input, Select, DatePicker, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Input, Select, DatePicker, Button, Tag } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import { 
   filterContainerStyle, 
@@ -9,6 +9,7 @@ import {
   smallFilterItemStyle
 } from './styles';
 import dayjs from 'dayjs';
+import { fetchOptions } from '../../services/api';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -22,8 +23,16 @@ interface FilterSectionProps {
   setSelectedAgent: (agent: string) => void;
   selectedStatus: string;
   setSelectedStatus: (status: string) => void;
+  selectedTags: string[];
+  setSelectedTags: (tags: string[]) => void;
   handleSearch: () => void;
   handleReset: () => void;
+}
+
+interface FilterOptions {
+  agents: string[];
+  statuses: string[];
+  tags: string[];
 }
 
 const FilterSection: React.FC<FilterSectionProps> = ({
@@ -35,9 +44,38 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   setSelectedAgent,
   selectedStatus,
   setSelectedStatus,
+  selectedTags,
+  setSelectedTags,
   handleSearch,
   handleReset
 }) => {
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    agents: [],
+    statuses: [],
+    tags: []
+  });
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchFilterOptions();
+  }, []);
+
+  const fetchFilterOptions = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchOptions();
+      if (response.success) {
+        setFilterOptions(response.data);
+      } else {
+        console.error('获取筛选选项失败:', response.message);
+      }
+    } catch (error) {
+      console.error('获取筛选选项出错:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={filterContainerStyle}>
       <div style={filterItemStyle}>
@@ -68,10 +106,11 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           value={selectedAgent}
           onChange={setSelectedAgent}
           allowClear
+          loading={loading}
         >
-          <Option value="沐沐">沐沐</Option>
-          <Option value="小林">小林</Option>
-          <Option value="阿强">阿强</Option>
+          {filterOptions.agents.map(agent => (
+            <Option key={agent} value={agent}>{agent}</Option>
+          ))}
         </Select>
       </div>
       
@@ -83,10 +122,42 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           value={selectedStatus}
           onChange={setSelectedStatus}
           allowClear
+          loading={loading}
         >
-          <Option value="已解决">已解决</Option>
-          <Option value="部分解决">部分解决</Option>
-          <Option value="未解决">未解决</Option>
+          {filterOptions.statuses.map(status => (
+            <Option key={status} value={status}>{status}</Option>
+          ))}
+        </Select>
+      </div>
+      
+      <div style={filterItemStyle}>
+        <div style={filterLabelStyle}>标签</div>
+        <Select
+          placeholder="选择标签"
+          style={{ width: '100%' }}
+          mode="multiple"
+          value={selectedTags}
+          onChange={setSelectedTags}
+          allowClear
+          loading={loading}
+          maxTagCount={3}
+          tagRender={(props) => {
+            const { label, value, closable, onClose } = props;
+            return (
+              <Tag 
+                color="#1677ff"
+                closable={closable}
+                onClose={onClose}
+                style={{ marginRight: 3 }}
+              >
+                {label}
+              </Tag>
+            );
+          }}
+        >
+          {filterOptions.tags.map(tag => (
+            <Option key={tag} value={tag}>{tag}</Option>
+          ))}
         </Select>
       </div>
       

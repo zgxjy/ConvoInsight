@@ -24,6 +24,7 @@ const ConversationList: React.FC = () => {
   const [searchText, setSearchText] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedAgent, setSelectedAgent] = useState<string>('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [timeRange, setTimeRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
   
   // 加载数据函数
@@ -35,6 +36,7 @@ const ConversationList: React.FC = () => {
         searchText: searchText || undefined,
         agent: selectedAgent || undefined,
         resolutionStatus: selectedStatus || undefined,
+        tags: selectedTags.length > 0 ? selectedTags : undefined,
         timeRange: timeRange ? [timeRange[0].format('YYYY-MM-DD'), timeRange[1].format('YYYY-MM-DD')] : undefined
       };
       
@@ -80,6 +82,7 @@ const ConversationList: React.FC = () => {
     setSearchText('');
     setSelectedStatus('');
     setSelectedAgent('');
+    setSelectedTags([]);
     setTimeRange(null);
     setFilters({});
     loadData(1);
@@ -108,6 +111,8 @@ const ConversationList: React.FC = () => {
         setSelectedAgent={setSelectedAgent}
         selectedStatus={selectedStatus}
         setSelectedStatus={setSelectedStatus}
+        selectedTags={selectedTags}
+        setSelectedTags={setSelectedTags}
         handleSearch={handleSearch}
         handleReset={handleReset}
       />
