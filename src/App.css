@@ -820,3 +820,68 @@ body {
     background: var(--grey-200);
     width: 32px;
 }
+
+/* 应用布局样式 */
+.app-layout {
+  min-height: 100vh;
+}
+
+/* 统一的卡片样式 */
+.ant-card {
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.ant-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* 统一的标题样式 */
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--grey-900);
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--grey-900);
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--grey-900);
+}
+
+/* 统一的内容间距 */
+.content-section {
+  margin-bottom: 24px;
+}
+
+/* 统一的按钮样式 */
+.ant-btn {
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.ant-btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.ant-btn-primary:hover {
+  background-color: rgba(var(--primary-rgb), 0.85);
+  border-color: rgba(var(--primary-rgb), 0.85);
+}
+
+/* 统一的标签样式 */
+.ant-tag {
+  border-radius: 16px;
+  padding: 0 10px;
+}

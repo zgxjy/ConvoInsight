@@ -1,41 +1,46 @@
-from flask import Blueprint, request, jsonify, current_app
-from .database import get_db
-from .models import (
-    ConversationData, ConversationListItem, PaginationData, 
-    ApiResponse, PaginatedResponse
-)
+"""
+会话管理API模块
+提供会话的增删改查功能
+"""
+from flask import Blueprint, request, jsonify
+from ..database import get_db
 import logging
-from typing import Dict, List, Optional, Any, Union
-from datetime import datetime
-import json
-from bson import json_util
+from .utils import make_response, parse_json
 
 # 设置日志
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # 创建蓝图
-api_bp = Blueprint('api', __name__)
+conversation_bp = Blueprint('conversation', __name__, url_prefix='/conversations')
 
-# 辅助函数：将MongoDB对象转换为JSON
-def parse_json(data):
-    """将MongoDB对象转换为JSON字符串，然后再解析为Python对象"""
-    return json.loads(json_util.dumps(data))
-
-# 辅助函数：构建标准API响应
-def make_response(success: bool, data: Any = None, message: str = None) -> Dict:
-    """构建标准API响应格式"""
-    response = {
-        'success': success,
-        'data': data or {}
-    }
-    if message:
-        response['message'] = message
-    return response
-
-@api_bp.route('/conversations', methods=['GET'])
+@conversation_bp.route('', methods=['GET'])
 def get_conversations():
-    """获取会话列表，支持分页和筛选"""
+    """获取会话列表，支持分页和筛选
+    
+    查询参数:
+        page (int): 当前页码，默认为1
+        pageSize (int): 每页记录数，默认为10
+        searchText (str): 搜索文本，用于搜索会话ID、客户ID或主要问题
+        agent (str): 客服名称
+        resolutionStatus (str): 解决状态
+        tag (str): 标签
+        timeStart (str): 开始时间
+        timeEnd (str): 结束时间
+        
+    返回:
+        JSON: {
+            "success": bool,
+            "data": {
+                "items": [ConversationListItem],
+                "pagination": {
+                    "current": int,
+                    "pageSize": int,
+                    "total": int
+                }
+            },
+            "message": str (可选)
+        }
+    """
     try:
         # 获取查询参数
         page = int(request.args.get('page', 1))
@@ -148,9 +153,20 @@ def get_conversations():
             }
         ))
 
-@api_bp.route('/conversations/<conversation_id>', methods=['GET'])
+@conversation_bp.route('/<conversation_id>', methods=['GET'])
 def get_conversation_detail(conversation_id):
-    """获取指定ID的会话详情"""
+    """获取指定ID的会话详情
+    
+    路径参数:
+        conversation_id (str): 会话ID
+        
+    返回:
+        JSON: {
+            "success": bool,
+            "data": ConversationData,
+            "message": str (可选)
+        }
+    """
     try:
         # 获取数据库连接
         db = get_db()
@@ -184,9 +200,27 @@ def get_conversation_detail(conversation_id):
             data={}
         ))
 
-@api_bp.route('/conversations', methods=['POST'])
+@conversation_bp.route('', methods=['POST'])
 def create_conversation():
-    """创建新的会话记录"""
+    """创建新的会话记录
+    
+    请求体:
+        JSON: ConversationData
+        
+    必需字段:
+        id (str): 会话ID
+        time (str): 会话时间
+        agent (str): 客服名称
+        customerInfo (obj): 客户信息
+        conversationSummary (obj): 会话摘要
+        
+    返回:
+        JSON: {
+            "success": bool,
+            "data": {"id": str},
+            "message": str (可选)
+        }
+    """
     try:
         # 获取请求数据
         data = request.json
@@ -243,9 +277,23 @@ def create_conversation():
             data={}
         ))
 
-@api_bp.route('/conversations/<conversation_id>', methods=['PUT'])
+@conversation_bp.route('/<conversation_id>', methods=['PUT'])
 def update_conversation(conversation_id):
-    """更新指定ID的会话记录"""
+    """更新指定ID的会话记录
+    
+    路径参数:
+        conversation_id (str): 会话ID
+        
+    请求体:
+        JSON: 部分或完整的ConversationData
+        
+    返回:
+        JSON: {
+            "success": bool,
+            "data": {"id": str},
+            "message": str (可选)
+        }
+    """
     try:
         # 获取请求数据
         data = request.json
@@ -303,9 +351,20 @@ def update_conversation(conversation_id):
             data={}
         ))
 
-@api_bp.route('/conversations/<conversation_id>', methods=['DELETE'])
+@conversation_bp.route('/<conversation_id>', methods=['DELETE'])
 def delete_conversation(conversation_id):
-    """删除指定ID的会话记录"""
+    """删除指定ID的会话记录
+    
+    路径参数:
+        conversation_id (str): 会话ID
+        
+    返回:
+        JSON: {
+            "success": bool,
+            "data": {"id": str},
+            "message": str (可选)
+        }
+    """
     try:
         # 获取数据库连接
         db = get_db()
@@ -342,161 +401,3 @@ def delete_conversation(conversation_id):
             message=f"删除会话出错: {str(e)}",
             data={}
         ))
-
-# 辅助路由，用于获取所有客服和状态选项
-@api_bp.route('/options', methods=['GET'])
-def get_options():
-    """获取筛选选项数据"""
-    try:
-        # 获取数据库连接
-        db = get_db()
-        
-        # 获取所有客服
-        agents = db.conversations.distinct('agent')
-        
-        # 获取所有状态
-        statuses = db.conversations.distinct('conversationSummary.resolutionStatus.status')
-        
-        # 获取所有标签
-        tags = db.conversations.distinct('tags')
-        
-        # 构建响应
-        return jsonify(make_response(
-            success=True,
-            data={
-                'agents': agents,
-                'statuses': statuses,
-                'tags': tags
-            }
-        ))
-    
-    except Exception as e:
-        logger.error(f"获取选项数据出错: {str(e)}")
-        return jsonify(make_response(
-            success=False,
-            message=f"获取选项数据出错: {str(e)}",
-            data={
-                'agents': [],
-                'statuses': [],
-                'tags': []
-            }
-        ))
-
-@api_bp.route('/statistics', methods=['GET'])
-def get_statistics():
-    """获取会话统计数据"""
-    try:
-        # 获取数据库连接
-        db = get_db()
-        
-        # 获取总会话数
-        total_conversations = db.conversations.count_documents({})
-        
-        # 按状态统计会话数
-        status_stats = []
-        statuses = db.conversations.distinct('conversationSummary.resolutionStatus.status')
-        for status in statuses:
-            count = db.conversations.count_documents({
-                'conversationSummary.resolutionStatus.status': status
-            })
-            status_stats.append({
-                'status': status,
-                'count': count
-            })
-        
-        # 按客服统计会话数
-        agent_stats = []
-        agents = db.conversations.distinct('agent')
-        for agent in agents:
-            count = db.conversations.count_documents({
-                'agent': agent
-            })
-            agent_stats.append({
-                'agent': agent,
-                'count': count
-            })
-        
-        # 构建响应
-        return jsonify(make_response(
-            success=True,
-            data={
-                'totalConversations': total_conversations,
-                'statusStatistics': status_stats,
-                'agentStatistics': agent_stats
-            }
-        ))
-    
-    except Exception as e:
-        logger.error(f"获取统计数据出错: {str(e)}")
-        return jsonify(make_response(
-            success=False,
-            message=f"获取统计数据出错: {str(e)}",
-            data={}
-        ))
-
-@api_bp.route('/tags', methods=['GET'])
-def get_tags():
-    """获取所有标签及其使用频率"""
-    try:
-        # 获取数据库连接
-        db = get_db()
-        
-        # 聚合查询，获取标签及其使用频率
-        pipeline = [
-            {'$unwind': '$tags'},
-            {'$group': {'_id': '$tags', 'count': {'$sum': 1}}},
-            {'$sort': {'count': -1}}
-        ]
-        
-        tag_stats = list(db.conversations.aggregate(pipeline))
-        
-        # 格式化结果
-        formatted_tags = []
-        for tag in tag_stats:
-            formatted_tags.append({
-                'tag': tag['_id'],
-                'count': tag['count']
-            })
-        
-        # 构建响应
-        return jsonify(make_response(
-            success=True,
-            data=formatted_tags
-        ))
-    
-    except Exception as e:
-        logger.error(f"获取标签数据出错: {str(e)}")
-        return jsonify(make_response(
-            success=False,
-            message=f"获取标签数据出错: {str(e)}",
-            data=[]
-        ))
-
-@api_bp.route('/health', methods=['GET'])
-def health_check():
-    """API健康检查"""
-    try:
-        # 获取数据库连接
-        db = get_db()
-        
-        # 尝试执行简单查询
-        db.conversations.find_one({})
-        
-        return jsonify(make_response(
-            success=True,
-            data={
-                'status': 'healthy',
-                'timestamp': datetime.now().isoformat()
-            }
-        ))
-    
-    except Exception as e:
-        logger.error(f"健康检查失败: {str(e)}")
-        return jsonify(make_response(
-            success=False,
-            message=f"健康检查失败: {str(e)}",
-            data={
-                'status': 'unhealthy',
-                'timestamp': datetime.now().isoformat()
-            }
-        )), 500

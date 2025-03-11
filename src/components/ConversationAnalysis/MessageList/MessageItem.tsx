@@ -19,7 +19,8 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
       position: 'relative',
       display: 'flex',
       alignItems: 'center',
-      width: 'auto', 
+      width: message.type === 'system' ? 'auto' : 'fit-content',
+      minWidth: message.type === 'system' ? '60%' : 'auto',
       justifyContent: message.type === 'system' ? 'center' : 
                      message.type === 'user' ? 'flex-start' : 'flex-end'
     }}>
@@ -33,6 +34,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         textAlign: message.type === 'system' ? 'center' : 'left',
         order: message.type === 'user' ? 1 : 0,
         maxWidth: '100%', 
+        width: message.type === 'system' ? '100%' : 'auto',
         wordWrap: 'break-word', 
         wordBreak: 'break-word', 
         overflowWrap: 'break-word', 

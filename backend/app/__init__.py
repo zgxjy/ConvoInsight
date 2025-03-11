@@ -13,8 +13,8 @@ def create_app():
     # 初始化数据库连接
     init_db(app)
     
-    # 注册蓝图
-    from .api import api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
+    # 注册API蓝图
+    from .api import init_app as init_api
+    init_api(app)
     
     return app

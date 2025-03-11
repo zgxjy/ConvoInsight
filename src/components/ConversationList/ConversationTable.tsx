@@ -129,6 +129,7 @@ const ConversationTable: React.FC<ConversationTableProps> = ({
           onClick: () => handleRowClick(record),
           style: tableRowStyle
         })}
+        sticky={{ offsetHeader: 0 }}
       />
     </Spin>
   );
