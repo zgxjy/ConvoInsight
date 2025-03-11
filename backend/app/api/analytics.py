@@ -30,7 +30,7 @@ def get_statistics():
                     {"agent": str, "count": int}
                 ]
             },
-            "message": str (可选)
+            "message": str (optional)
         }
     """
     try:
@@ -90,30 +90,21 @@ def get_dashboard_data():
         JSON: {
             "success": bool,
             "data": {
-                "overview": {
-                    "totalConversations": int,
-                    "avgSatisfaction": float,
-                    "avgResolutionTime": float
+                "overview":{
+                "totalConversations": int,
+                "avg_satisfaction": float,
+                "avg_resolution": float,
+                "avg_attitude":float,
+                "avg_risk":float
                 },
-                "agentPerformance": {
-                    "avgResponseTime": float,
-                    "resolutionRate": float,
-                    "customerSatisfaction": float
-                },
-                "topIssues": [
-                    {"issue": str, "count": int}
+                "Top_tags": [
+                    {"tag": str, "count": int,"percentage": float}
                 ],
-                "trend": [
-                    {"date": str, "count": int}
-                ],
-                "emotionDistribution": [
-                    {"emotion": str, "count": int}
-                ],
-                "issueTypeDistribution": [
-                    {"type": str, "count": int}
+                "Top_hotwords": [
+                    {"word": str, "count": int,"percentage": float}
                 ]
             },
-            "message": str (可选)
+            "message": str (optional)
         }
     """
     try:
@@ -123,68 +114,56 @@ def get_dashboard_data():
         # 获取总体指标
         total_conversations = db.conversations.count_documents({})
         
-        # 计算平均满意度
-        satisfaction_pipeline = [
-            {'$match': {'metrics.satisfaction.value': {'$exists': True}}},
-            {'$group': {'_id': None, 'avg': {'$avg': '$metrics.satisfaction.value'}}}
-        ]
-        satisfaction_result = list(db.conversations.aggregate(satisfaction_pipeline))
-        avg_satisfaction = round(satisfaction_result[0]['avg'], 2) if satisfaction_result else 0
+        # 计算平均指标
+        avg_satisfaction_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_satisfaction': {'$avg': '$metrics.satisfaction.value'}}}
+        ])
+        avg_satisfaction_result = list(avg_satisfaction_cursor)
+        avg_satisfaction = avg_satisfaction_result[0]['avg_satisfaction'] if avg_satisfaction_result else 0
         
-        # 计算平均解决时间（假设有开始和结束时间字段）
-        # 这里使用模拟数据，实际应根据数据结构调整
-        avg_resolution_time = 15.5  # 分钟
+        avg_resolution_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_resolution': {'$avg': '$metrics.resolution.value'}}}
+        ])
+        avg_resolution_result = list(avg_resolution_cursor)
+        avg_resolution = avg_resolution_result[0]['avg_resolution'] if avg_resolution_result else 0
         
-        # 客服表现指标
-        avg_response_time = 2.3  # 分钟
-        resolution_rate = 0.85  # 85%
-        customer_satisfaction = avg_satisfaction
+        avg_attitude_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_attitude': {'$avg': '$metrics.attitude.value'}}}
+        ])
+        avg_attitude_result = list(avg_attitude_cursor)
+        avg_attitude = avg_attitude_result[0]['avg_attitude'] if avg_attitude_result else 0
         
-        # 获取热门问题（基于标签）
-        top_issues_pipeline = [
+        avg_risk_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_risk': {'$avg': '$metrics.risk.value'}}}
+        ])
+        avg_risk_result = list(avg_risk_cursor)
+        avg_risk = avg_risk_result[0]['avg_risk'] if avg_risk_result else 0
+
+        # 获取Top标签
+        top_tag_cursor = db.conversations.aggregate([
             {'$unwind': '$tags'},
             {'$group': {'_id': '$tags', 'count': {'$sum': 1}}},
             {'$sort': {'count': -1}},
-            {'$limit': 5}
-        ]
-        top_issues_result = list(db.conversations.aggregate(top_issues_pipeline))
-        top_issues = [{'issue': item['_id'], 'count': item['count']} for item in top_issues_result]
-        
-        # 获取最近7天的会话数量趋势
-        today = datetime.now()
-        trend_data = []
-        
-        for i in range(6, -1, -1):
-            date = today - timedelta(days=i)
-            date_str = date.strftime('%Y-%m-%d')
-            # 这里假设time字段是ISO格式的日期字符串
-            # 实际查询应根据数据库中的日期格式调整
-            count = db.conversations.count_documents({
-                'time': {'$regex': f'^{date_str}'}
-            })
-            trend_data.append({
-                'date': date_str,
-                'count': count
-            })
-        
-        # 情绪分布（模拟数据）
-        emotion_distribution = [
-            {'emotion': '正向', 'count': int(total_conversations * 0.45)},
-            {'emotion': '中立', 'count': int(total_conversations * 0.35)},
-            {'emotion': '负向', 'count': int(total_conversations * 0.20)}
-        ]
-        
-        # 问题类型分布（基于主要问题字段）
-        issue_type_pipeline = [
-            {'$group': {'_id': '$conversationSummary.mainIssue', 'count': {'$sum': 1}}},
+            {'$limit': 20}
+        ])
+        top_tag_result = list(top_tag_cursor)
+        top_tag = top_tag_result
+
+        # 获取Top热词
+        top_hotword_cursor = db.conversations.aggregate([
+            {'$unwind': '$hotWords'},
+            {'$group': {'_id': '$hotWords', 'count': {'$sum': 1}}},
             {'$sort': {'count': -1}},
-            {'$limit': 5}
-        ]
-        issue_type_result = list(db.conversations.aggregate(issue_type_pipeline))
-        issue_type_distribution = [
-            {'type': item['_id'] or '未分类', 'count': item['count']} 
-            for item in issue_type_result
-        ]
+            {'$limit': 20}
+        ])
+        top_hotword_result = list(top_hotword_cursor)
+        top_hotword = top_hotword_result
+        
+        # 计算Top标签和热词的百分比
+        for tag in top_tag:
+            tag['percentage'] = (tag['count'] / total_conversations) * 100
+        for hotword in top_hotword:
+            hotword['percentage'] = (hotword['count'] / total_conversations) * 100
         
         # 构建响应
         return jsonify(make_response(
@@ -192,21 +171,15 @@ def get_dashboard_data():
             data={
                 'overview': {
                     'totalConversations': total_conversations,
-                    'avgSatisfaction': avg_satisfaction,
-                    'avgResolutionTime': avg_resolution_time
+                    'avg_satisfaction': avg_satisfaction,
+                    'avg_resolution': avg_resolution,
+                    'avg_attitude': avg_attitude,
+                    'avg_risk': avg_risk
                 },
-                'agentPerformance': {
-                    'avgResponseTime': avg_response_time,
-                    'resolutionRate': resolution_rate,
-                    'customerSatisfaction': customer_satisfaction
-                },
-                'topIssues': top_issues,
-                'trend': trend_data,
-                'emotionDistribution': emotion_distribution,
-                'issueTypeDistribution': issue_type_distribution
+                'top_tag': top_tag,
+                'top_hotword': top_hotword
             }
         ))
-    
     except Exception as e:
         logger.error(f"获取看板数据出错: {str(e)}")
         return jsonify(make_response(
