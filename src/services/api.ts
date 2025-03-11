@@ -135,3 +135,43 @@ export const fetchStatistics = async (): Promise<ApiResponse<any>> => {
     };
   }
 };
+
+// 获取看板数据的API
+export interface DashboardData {
+  overview: {
+    totalConversations: number;
+    avg_totalMessages: number;
+    avg_agentMessages: number;
+    avg_userMessages: number;
+  };
+  conversationMetrics: {
+    avg_satisfaction: number;
+    avg_resolution: number;
+    avg_attitude: number;
+    avg_risk: number;
+  };
+  Top_tags: Array<{
+    _id: string;
+    count: number;
+    percentage: number;
+  }>;
+  Top_hotwords: Array<{
+    _id: string;
+    count: number;
+    percentage: number;
+  }>;
+}
+
+export const fetchDashboardData = async (): Promise<ApiResponse<DashboardData>> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/dashboard`);
+    return response.data;
+  } catch (error) {
+    console.error('获取看板数据出错:', error);
+    return {
+      success: false,
+      message: '获取看板数据失败',
+      data: {} as DashboardData
+    };
+  }
+};

@@ -91,12 +91,16 @@ def get_dashboard_data():
             "success": bool,
             "data": {
                 "overview":{
-                "totalConversations": int,
-                "avg_satisfaction": float,
-                "avg_resolution": float,
-                "avg_attitude":float,
-                "avg_risk":float
+                    "totalConversations": int,
+                    "avg_totalMessages": int,
+                    "avg_agentMessages": int,
+                    "avg_userMessages": int,
                 },
+                "conversationMetrics":{
+                    "avg_satisfaction": float,
+                    "avg_resolution": float,
+                    "avg_attitude":float,
+                    "avg_risk":float},
                 "Top_tags": [
                     {"tag": str, "count": int,"percentage": float}
                 ],
@@ -113,7 +117,27 @@ def get_dashboard_data():
         
         # 获取总体指标
         total_conversations = db.conversations.count_documents({})
-        
+        # 计算平均消息数
+        avg_total_messages_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_total_messages': {'$avg': '$interactionAnalysis.totalMessages'}}}
+        ])
+        avg_total_messages_result = list(avg_total_messages_cursor)
+        avg_total_messages = avg_total_messages_result[0]['avg_total_messages'] if avg_total_messages_result else 0
+
+        # 计算平均客服消息数
+        avg_agent_messages_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_agent_messages': {'$avg': '$interactionAnalysis.agentMessages'}}}
+        ])
+        avg_agent_messages_result = list(avg_agent_messages_cursor)
+        avg_agent_messages = avg_agent_messages_result[0]['avg_agent_messages'] if avg_agent_messages_result else 0
+
+        # 计算平均用户消息数
+        avg_user_messages_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_user_messages': {'$avg': '$interactionAnalysis.userMessages'}}}
+        ])
+        avg_user_messages_result = list(avg_user_messages_cursor)
+        avg_user_messages = avg_user_messages_result[0]['avg_user_messages'] if avg_user_messages_result else 0
+
         # 计算平均指标
         avg_satisfaction_cursor = db.conversations.aggregate([
             {'$group': {'_id': None, 'avg_satisfaction': {'$avg': '$metrics.satisfaction.value'}}}
@@ -169,15 +193,20 @@ def get_dashboard_data():
         return jsonify(make_response(
             success=True,
             data={
-                'overview': {
-                    'totalConversations': total_conversations,
-                    'avg_satisfaction': avg_satisfaction,
-                    'avg_resolution': avg_resolution,
-                    'avg_attitude': avg_attitude,
-                    'avg_risk': avg_risk
+                "overview": {
+                    "totalConversations": total_conversations,
+                    "avg_totalMessages": avg_total_messages,
+                    "avg_agentMessages": avg_agent_messages,
+                    "avg_userMessages": avg_user_messages
                 },
-                'top_tag': top_tag,
-                'top_hotword': top_hotword
+                "conversationMetrics": {
+                    "avg_satisfaction": avg_satisfaction,
+                    "avg_resolution": avg_resolution,
+                    "avg_attitude": avg_attitude,
+                    "avg_risk": avg_risk
+                },
+                "Top_tags": top_tag,
+                "Top_hotwords": top_hotword
             }
         ))
     except Exception as e:
