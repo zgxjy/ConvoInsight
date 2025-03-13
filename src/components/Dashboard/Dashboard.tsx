@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Statistic, List, Progress, Spin, Tooltip, Table, Tag } from 'antd';
+import { Row, Col, Card, Statistic, List, Progress, Spin, Tooltip, Table, Tag, Button } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
@@ -577,6 +577,14 @@ const Dashboard: React.FC = () => {
               <Tooltip title="展示各客服的服务表现，包括解决率、满意度和综合表现评分">
                 <InfoCircleOutlined style={{ marginLeft: '8px', color: '#8c8c8c' }} />
               </Tooltip>
+              <Button 
+                type="primary" 
+                size="small" 
+                onClick={() => navigate('/agents')}
+                style={{ marginLeft: '16px' }}
+              >
+                查看所有客服
+              </Button>
             </h2>
             <Card className="chart-card">
               {dashboardData.agent_service_rates && dashboardData.agent_service_rates.length > 0 ? (
@@ -590,9 +598,12 @@ const Dashboard: React.FC = () => {
                         fixed: 'left',
                         sorter: (a, b) => a.agent.localeCompare(b.agent),
                         render: (text) => (
-                          <div style={{ fontWeight: 600, color: '#1677ff' }}>
+                          <a 
+                            onClick={() => navigate(`/agent/${encodeURIComponent(text)}`)}
+                            style={{ fontWeight: 600, color: '#1677ff' }}
+                          >
                             {text}
-                          </div>
+                          </a>
                         )
                       },
                       {

@@ -6,6 +6,8 @@ import ConversationList from './components/ConversationList';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 import TagAnalysis from './components/TagAnalysis/TagAnalysis';
+import AgentAnalysis from './components/AgentAnalysis/AgentAnalysis';
+import AgentList from './components/AgentAnalysis/AgentList';
 import './App.css';
 
 const { Content } = Layout;
@@ -26,6 +28,8 @@ const App: React.FC = () => {
             <Route path="/conversation/:id" element={<ConversationAnalysis />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tag-analysis/:tagName" element={<TagAnalysis />} />
+            <Route path="/agent/:agentName" element={<AgentAnalysis />} />
+            <Route path="/agents" element={<AgentList />} />
           </Routes>
         </Content>
       </Layout>

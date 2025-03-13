@@ -306,3 +306,163 @@ export const fetchTagAnalysisData = async (
     throw error;
   }
 };
+
+// 客服分析数据接口
+export interface AgentAnalysisData {
+  agent: string;
+  count: number;
+  performance: {
+    resolved: number;
+    partially_resolved: number;
+    unresolved: number;
+    avg_satisfaction: number;
+    avg_resolution: number;
+    avg_attitude: number;
+    avg_risk: number;
+    overall_performance: number;
+    avg_response_time: number;
+    avg_resolution_time: number;
+  };
+  conversations: Array<{
+    id: string;
+    title: string;
+    time: string;
+    agent: string;
+    customerId: string;
+    mainIssue: string;
+    status: string;
+    satisfaction: number;
+    resolution: number;
+    attitude: number;
+    risk: number;
+    tags: string[];
+  }>;
+  pagination: {
+    current: number;
+    pageSize: number;
+    total: number;
+  };
+}
+
+// 获取客服分析数据的API
+export const fetchAgentAnalysisData = async (
+  agentName: string,
+  page: number = 1,
+  pageSize: number = 10,
+  filters?: {
+    searchText?: string;
+    tag?: string;
+    resolutionStatus?: string;
+    timeStart?: string;
+    timeEnd?: string;
+  }
+): Promise<AgentAnalysisData> => {
+  try {
+    // 使用encodeURIComponent确保URL安全编码
+    const encodedAgentName = encodeURIComponent(agentName);
+    
+    // 构建查询参数
+    const params = new URLSearchParams();
+    params.append('page', page.toString());
+    params.append('pageSize', pageSize.toString());
+    
+    if (filters) {
+      if (filters.searchText) {
+        params.append('searchText', filters.searchText);
+      }
+      
+      if (filters.tag) {
+        params.append('tag', filters.tag);
+      }
+      
+      if (filters.resolutionStatus) {
+        params.append('resolutionStatus', filters.resolutionStatus);
+      }
+      
+      if (filters.timeStart) {
+        params.append('timeStart', filters.timeStart);
+      }
+      
+      if (filters.timeEnd) {
+        params.append('timeEnd', filters.timeEnd);
+      }
+    }
+    
+    console.log(`正在请求客服数据: ${API_BASE_URL}/agent/${encodedAgentName}?${params.toString()}`);
+    
+    // 使用fetch API的完整选项
+    const response = await fetch(`${API_BASE_URL}/agent/${encodedAgentName}?${params.toString()}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      // 尝试解析错误响应
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '获取客服分析数据失败');
+      } catch (jsonError) {
+        // 如果响应不是JSON格式，则返回状态文本
+        throw new Error(`请求失败: ${response.status} ${response.statusText}`);
+      }
+    }
+    
+    const result = await response.json() as TagApiResponse<AgentAnalysisData>;
+    if (!result.success) {
+      throw new Error(result.message || '获取客服分析数据失败');
+    }
+    return result.data;
+  } catch (error) {
+    console.error('获取客服分析数据出错:', error);
+    throw error;
+  }
+};
+
+// 获取所有客服列表的API
+export interface AgentListItem {
+  agent: string;
+  count: number;
+  resolved: number;
+  partially_resolved: number;
+  unresolved: number;
+  avg_satisfaction: number;
+  avg_resolution: number;
+  avg_attitude: number;
+  avg_risk: number;
+  overall_performance: number;
+}
+
+export const fetchAgentList = async (): Promise<AgentListItem[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/agents`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      // 尝试解析错误响应
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '获取客服列表失败');
+      } catch (jsonError) {
+        // 如果响应不是JSON格式，则返回状态文本
+        throw new Error(`请求失败: ${response.status} ${response.statusText}`);
+      }
+    }
+    
+    const result = await response.json() as TagApiResponse<AgentListItem[]>;
+    if (!result.success) {
+      throw new Error(result.message || '获取客服列表失败');
+    }
+    return result.data;
+  } catch (error) {
+    console.error('获取客服列表出错:', error);
+    throw error;
+  }
+};

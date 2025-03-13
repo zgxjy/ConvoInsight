@@ -1,0 +1,266 @@
+.agent-analysis-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.agent-analysis-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.agent-analysis-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.agent-metrics {
+  margin-bottom: 24px;
+}
+
+.agent-metrics .ant-card {
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.agent-metrics .ant-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+.agent-metrics .ant-statistic-title {
+  font-size: 14px;
+  color: #595959;
+  margin-bottom: 8px;
+}
+
+.agent-metrics .ant-statistic-content {
+  font-size: 56px;
+  font-weight: 800;
+}
+
+.metric-card {
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.metric-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+.metric-progress {
+  margin-top: 8px;
+}
+
+.metric-progress .ant-progress-inner {
+  background-color: #f5f5f5;
+}
+
+.metric-progress .ant-progress-bg {
+  height: 8px !important;
+}
+
+.conversations-table {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+}
+
+.conversations-table .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.conversations-table .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.conversations-table .ant-card-body {
+  padding: 24px;
+}
+
+.filter-section {
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-section .ant-space {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .agent-analysis-container {
+    padding: 16px;
+  }
+  
+  .agent-metrics .ant-statistic-content {
+    font-size: 36px;
+  }
+  
+  .conversations-table .ant-card-body {
+    padding: 16px;
+  }
+}
+
+/* 确保表格在小屏幕上可以水平滚动 */
+.ant-table-wrapper {
+  overflow-x: auto;
+}
+
+/* 统一的标签样式 */
+.ant-tag {
+  border-radius: 16px;
+  padding: 0 8px;
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+/* 统一的进度条样式 */
+.ant-progress-text {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 卡片内容区域统一样式 */
+.ant-card-body {
+  padding: 24px;
+}
+
+/* 确保进度条正确显示 */
+.score-progress {
+  width: 100%;
+  min-width: 80px;
+}
+
+.score-progress .ant-progress-inner {
+  background-color: #f5f5f5;
+}
+
+.score-progress .ant-progress-bg {
+  height: 8px !important;
+}
+
+.score-progress .ant-progress-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #595959;
+}
+
+/* 客服列表样式 */
+.agent-list-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.agent-list-card .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.agent-list-card .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.agent-list-card .ant-card-body {
+  padding: 24px;
+}
+
+.agent-list-card .ant-table-thead > tr > th {
+  background-color: #f5f5f5;
+  color: #1f1f1f;
+  font-weight: 600;
+}
+
+.agent-list-card .ant-table-tbody > tr > td {
+  padding: 12px 16px;
+}
+
+.agent-list-card .ant-table-tbody > tr:hover > td {
+  background-color: #f0f7ff;
+}
+
+.agent-list-card .ant-btn-primary {
+  border-radius: 4px;
+  height: 28px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+.agent-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.agent-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.agent-list-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.agent-list-header .back-button {
+  margin-right: 16px;
+}
+
+@media (max-width: 768px) {
+  .agent-list-container {
+    padding: 16px;
+  }
+  
+  .agent-list-card .ant-card-body {
+    padding: 16px;
+  }
+  
+  .agent-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .agent-list-header .back-button {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+}

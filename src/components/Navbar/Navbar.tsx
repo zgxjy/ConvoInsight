@@ -22,6 +22,10 @@ const Navbar: React.FC = () => {
       return location.pathname === '/dashboard';
     } else if (pathPattern === '/tag-analysis') {
       return location.pathname.startsWith('/tag-analysis/');
+    } else if (pathPattern === '/agents') {
+      return location.pathname === '/agents';
+    } else if (pathPattern === '/agent') {
+      return location.pathname.startsWith('/agent/');
     }
     return false;
   };
@@ -59,6 +63,12 @@ const Navbar: React.FC = () => {
               className={`nav-link ${isActive('/tag-analysis') ? 'active' : ''}`}
             >
               标签分析
+            </NavLink>
+            <NavLink 
+              to="/agents" 
+              className={`nav-link ${isActive('/agents') || isActive('/agent') ? 'active' : ''}`}
+            >
+              客服分析
             </NavLink>
           </nav>
         </div>
@@ -110,6 +120,13 @@ const Navbar: React.FC = () => {
             onClick={() => setVisible(false)}
           >
             标签分析
+          </NavLink>
+          <NavLink 
+            to="/agents" 
+            className={`drawer-nav-link ${isActive('/agents') || isActive('/agent') ? 'active' : ''}`}
+            onClick={() => setVisible(false)}
+          >
+            客服分析
           </NavLink>
         </nav>
       </Drawer>
