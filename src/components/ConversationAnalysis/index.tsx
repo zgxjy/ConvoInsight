@@ -132,12 +132,24 @@ const ConversationAnalysis: React.FC = () => {
         >
           返回会话列表
         </Button>
-        <h1 style={{ 
-          margin: 0,
-          ...styles.typography.h1
-        }}>
-          会话 {conversation.id}
-        </h1>
+        <div>
+          <h1 style={{ 
+            margin: 0,
+            ...styles.typography.h1
+          }}>
+            会话 {conversation.id}
+          </h1>
+          <div style={{
+            ...styles.typography.body,
+            color: styles.colors.text.secondary,
+            marginTop: styles.spacing.xs
+          }}>
+            负责客服：<a href={`/agent/${encodeURIComponent(conversation.agent)}`} onClick={(e) => {
+              e.preventDefault();
+              navigate(`/agent/${encodeURIComponent(conversation.agent)}`);
+            }}>{conversation.agent}</a>
+          </div>
+        </div>
       </div>
 
       {/* 客服表现评估 */}
