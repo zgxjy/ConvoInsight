@@ -197,7 +197,7 @@ def get_dashboard_data():
         
         # 计算标签解决率分布
         tag_resolution_rates = []
-        top_tags_list = [tag['_id'] for tag in top_tag[:10]]  # 只取前10个标签
+        top_tags_list = [tag['_id'] for tag in top_tag]  # 只取前10个标签
         
         for tag_name in top_tags_list:
             # 查询包含该标签的会话
@@ -277,7 +277,7 @@ def get_dashboard_data():
                 'count': {'$sum': 1}
             }},
             {'$sort': {'count': -1}},
-            {'$limit': 10}
+            {'$limit': 20}
         ])
         
         tag_pairs_result = list(tag_pairs_cursor)
