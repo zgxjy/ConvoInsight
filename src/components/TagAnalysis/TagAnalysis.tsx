@@ -321,13 +321,14 @@ const TagAnalysis: React.FC = () => {
         <Table
           columns={[
             {
-              title: '会话标题',
-              dataIndex: 'title',
-              key: 'title',
+              title: '会话ID',
+              dataIndex: 'id',
+              key: 'id',
+              width: 180,
               render: (text, record: any) => (
-                <a href={`/conversations/${record.id}`} onClick={(e) => {
+                <a href={`/conversation/${encodeURIComponent(text)}`} onClick={(e) => {
                   e.preventDefault();
-                  navigate(`/conversations/${record.id}`);
+                  navigate(`/conversation/${encodeURIComponent(text)}`);
                 }}>
                   {text}
                 </a>
@@ -374,20 +375,71 @@ const TagAnalysis: React.FC = () => {
               title: '满意度',
               dataIndex: 'satisfaction',
               key: 'satisfaction',
-              render: (value) => <ScoreProgress value={value} />
+              width: 120,
+              render: (value) => {
+                // 确保值是数字类型
+                const numValue = typeof value === 'number' ? value : 
+                              typeof value === 'string' ? parseFloat(value) : 0;
+                
+                // 根据统一色彩系统设置颜色
+                let color = '';
+                if (numValue >= 80) color = '#52c41a'; // 成功色
+                else if (numValue >= 60) color = '#faad14'; // 警告色
+                else color = '#ff4d4f'; // 错误色
+                
+                return (
+                  <div className="score-progress">
+                    <Progress 
+                      percent={numValue} 
+                      strokeColor={color}
+                      format={() => `${numValue}`}
+                      size="small"
+                      status="normal"
+                      strokeWidth={8}
+                      trailColor="#f5f5f5"
+                    />
+                  </div>
+                );
+              }
             },
             {
               title: '解决度',
               dataIndex: 'resolution',
               key: 'resolution',
               responsive: ['md'],
-              render: (value) => <ScoreProgress value={value} />
+              width: 120,
+              render: (value) => {
+                // 确保值是数字类型
+                const numValue = typeof value === 'number' ? value : 
+                              typeof value === 'string' ? parseFloat(value) : 0;
+                
+                // 根据统一色彩系统设置颜色
+                let color = '';
+                if (numValue >= 80) color = '#52c41a'; // 成功色
+                else if (numValue >= 60) color = '#faad14'; // 警告色
+                else color = '#ff4d4f'; // 错误色
+                
+                return (
+                  <div className="score-progress">
+                    <Progress 
+                      percent={numValue} 
+                      strokeColor={color}
+                      format={() => `${numValue}`}
+                      size="small"
+                      status="normal"
+                      strokeWidth={8}
+                      trailColor="#f5f5f5"
+                    />
+                  </div>
+                );
+              }
             },
             {
               title: '态度评分',
               dataIndex: 'attitude',
               key: 'attitude',
               responsive: ['lg'],
+              width: 120,
               render: (value) => <ScoreProgress value={value} />
             },
             {
@@ -395,6 +447,7 @@ const TagAnalysis: React.FC = () => {
               dataIndex: 'risk',
               key: 'risk',
               responsive: ['lg'],
+              width: 120,
               render: (value) => <ScoreProgress value={value} />
             },
             {
