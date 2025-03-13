@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Card, Statistic, List, Progress, Spin, Tooltip, Table, Tag } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import { fetchDashboardData, DashboardData } from '../../services/api';
 
@@ -12,6 +13,7 @@ const Dashboard: React.FC = () => {
     current: 1,
     pageSize: 10,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -349,7 +351,15 @@ const Dashboard: React.FC = () => {
                         title: '标签',
                         dataIndex: 'tag',
                         key: 'tag',
-                        render: (text) => <Tag color="#1677ff">{text}</Tag>,
+                        render: (text) => (
+                          <Tag 
+                            color="#1677ff" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => navigate(`/tag-analysis/${encodeURIComponent(text)}`)}
+                          >
+                            {text}
+                          </Tag>
+                        ),
                         sorter: (a, b) => a.tag.localeCompare(b.tag)
                       },
                       {
@@ -488,9 +498,21 @@ const Dashboard: React.FC = () => {
                           const tags = text.split(' & ');
                           return (
                             <>
-                              <Tag color="#1677ff">{tags[0]}</Tag>
+                              <Tag 
+                                color="#1677ff"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => navigate(`/tag-analysis/${encodeURIComponent(tags[0])}`)}
+                              >
+                                {tags[0]}
+                              </Tag>
                               <span style={{ margin: '0 4px' }}>&</span>
-                              <Tag color="#69b1ff">{tags[1]}</Tag>
+                              <Tag 
+                                color="#69b1ff"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => navigate(`/tag-analysis/${encodeURIComponent(tags[1])}`)}
+                              >
+                                {tags[1]}
+                              </Tag>
                             </>
                           );
                         }

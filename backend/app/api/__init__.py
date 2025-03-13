@@ -12,12 +12,14 @@ from .conversation import conversation_bp
 from .metadata import metadata_bp
 from .analytics import analytics_bp
 from .system import system_bp
+from .tag_analytics import tag_analytics_bp
 
 # 注册子蓝图
 api_bp.register_blueprint(conversation_bp)
 api_bp.register_blueprint(metadata_bp)
 api_bp.register_blueprint(analytics_bp)
 api_bp.register_blueprint(system_bp)
+api_bp.register_blueprint(tag_analytics_bp)
 
 # 导入工具函数，方便其他模块使用
 from .utils import make_response, parse_json
