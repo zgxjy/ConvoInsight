@@ -338,19 +338,32 @@ const Dashboard: React.FC = () => {
             </h2>
             <Card className="chart-card">
               {dashboardData.tag_resolution_rates && dashboardData.tag_resolution_rates.length > 0 ? (
-                <div style={{ height: 300, overflow: 'auto' }}>
+                <div style={{ height: 400, overflow: 'auto' }}>
                   <Table
                     columns={[
                       {
                         title: '标签',
                         dataIndex: 'tag',
                         key: 'tag',
-                        render: (text) => <Tag color="#1677ff">{text}</Tag>
+                        render: (text) => <Tag color="#1677ff">{text}</Tag>,
+                        sorter: (a, b) => a.tag.localeCompare(b.tag)
+                      },
+                      {
+                        title: '会话数量',
+                        dataIndex: 'count',
+                        key: 'count',
+                        sorter: (a, b) => a.count - b.count,
+                        render: (value) => (
+                          <div style={{ textAlign: 'center', fontWeight: 600, color: '#1677ff' }}>
+                            {value}
+                          </div>
+                        )
                       },
                       {
                         title: '已解决',
                         dataIndex: 'resolved',
                         key: 'resolved',
+                        sorter: (a, b) => a.resolved - b.resolved,
                         render: (value) => (
                           <div>
                             <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
@@ -373,6 +386,7 @@ const Dashboard: React.FC = () => {
                         title: '部分解决',
                         dataIndex: 'partially_resolved',
                         key: 'partially_resolved',
+                        sorter: (a, b) => a.partially_resolved - b.partially_resolved,
                         render: (value) => (
                           <div>
                             <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
@@ -395,6 +409,7 @@ const Dashboard: React.FC = () => {
                         title: '未解决',
                         dataIndex: 'unresolved',
                         key: 'unresolved',
+                        sorter: (a, b) => a.unresolved - b.unresolved,
                         render: (value) => (
                           <div>
                             <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
@@ -417,6 +432,7 @@ const Dashboard: React.FC = () => {
                     dataSource={dashboardData.tag_resolution_rates.map((item: any, index: number) => ({
                       key: index,
                       tag: item.tag,
+                      count: item.count,
                       resolved: item.resolved,
                       partially_resolved: item.partially_resolved,
                       unresolved: item.unresolved
@@ -442,13 +458,14 @@ const Dashboard: React.FC = () => {
             </h2>
             <Card className="chart-card">
               {dashboardData.tag_cooccurrence && dashboardData.tag_cooccurrence.length > 0 ? (
-                <div style={{ height: 300, overflow: 'auto' }}>
+                <div style={{ height: 400, overflow: 'auto' }}>
                   <Table
                     columns={[
                       {
                         title: '标签对',
                         dataIndex: 'tagPair',
                         key: 'tagPair',
+                        sorter: (a, b) => a.tagPair.localeCompare(b.tagPair),
                         render: (text) => {
                           const tags = text.split(' & ');
                           return (
@@ -464,6 +481,7 @@ const Dashboard: React.FC = () => {
                         title: '共现次数',
                         dataIndex: 'count',
                         key: 'count',
+                        sorter: (a, b) => a.count - b.count,
                         render: (value, record: any) => (
                           <div>
                             <Progress 
@@ -475,6 +493,17 @@ const Dashboard: React.FC = () => {
                           </div>
                         )
                       },
+                      {
+                        title: '占比',
+                        dataIndex: 'percentage',
+                        key: 'percentage',
+                        sorter: (a, b) => a.percentage - b.percentage,
+                        render: (value) => (
+                          <div style={{ textAlign: 'right', fontSize: '14px', color: '#595959' }}>
+                            {Math.round(value)}%
+                          </div>
+                        )
+                      }
                     ]}
                     dataSource={dashboardData.tag_cooccurrence.map((item: any, index: number) => {
                       // 确保tag_pair是数组且有两个元素
