@@ -8,6 +8,10 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [tagPagination, setTagPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -437,7 +441,21 @@ const Dashboard: React.FC = () => {
                       partially_resolved: item.partially_resolved,
                       unresolved: item.unresolved
                     }))}
-                    pagination={false}
+                    pagination={{
+                      current: tagPagination.current,
+                      pageSize: tagPagination.pageSize,
+                      total: dashboardData.tag_resolution_rates.length,
+                      showSizeChanger: true,
+                      pageSizeOptions: ['10', '20', '50', '100'],
+                      showTotal: (total) => `共 ${total} 个标签`,
+                      position: ['bottomRight'],
+                      onChange: (page, pageSize) => {
+                        setTagPagination({ current: page, pageSize });
+                      },
+                      onShowSizeChange: (current, size) => {
+                        setTagPagination({ current: 1, pageSize: size });
+                      }
+                    }}
                     size="small"
                   />
                 </div>
