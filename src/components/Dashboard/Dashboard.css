@@ -1,5 +1,7 @@
 .dashboard-container {
   padding: 24px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
 }
 
 .dashboard-title {
@@ -7,41 +9,82 @@
   font-weight: 600;
   margin-bottom: 24px;
   color: #1f1f1f;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.dashboard-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #1677ff;
+  border-radius: 2px;
 }
 
 .dashboard-section {
   margin-bottom: 32px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .section-title {
   font-size: 20px;
   font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   color: #1f1f1f;
+  position: relative;
+  padding-left: 12px;
+  border-left: 4px solid #1677ff;
 }
 
 .metric-card {
   height: 100%;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s, transform 0.3s;
+  transition: all 0.3s ease;
   padding: 16px;
+  border: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #1677ff, #52c41a);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .metric-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+}
+
+.metric-card:hover::before {
+  opacity: 1;
 }
 
 .metric-progress {
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .list-card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   height: 100%;
-  transition: box-shadow 0.3s;
+  transition: all 0.3s ease;
+  border: none;
+  overflow: hidden;
 }
 
 .list-card:hover {
@@ -49,8 +92,13 @@
 }
 
 .list-item {
-  padding: 8px 0;
+  padding: 12px 16px;
   border-bottom: 1px solid #f5f5f5;
+  transition: background-color 0.3s ease;
+}
+
+.list-item:hover {
+  background-color: #f9f9f9;
 }
 
 .list-item:last-child {
@@ -85,28 +133,93 @@
 
 .list-item-percentage {
   font-size: 12px;
-  color: #8c8c8c;
+  color: #595959;
   background-color: #f5f5f5;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 16px;
+  font-weight: 500;
 }
 
 .list-item-progress {
   width: 100%;
+  height: 6px;
+}
+
+.list-item-progress .ant-progress-bg {
+  border-radius: 3px;
+}
+
+.metric-title {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #595959;
+}
+
+.metric-baseline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.metric-trend {
+  padding: 2px 8px;
+  border-radius: 12px;
+  background-color: #f5f5f5;
+  font-weight: 500;
+}
+
+.list-item-rank {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f0f5ff;
+  color: #1677ff;
+  font-weight: 600;
+  font-size: 12px;
+  margin-right: 12px;
+}
+
+.list-item:nth-child(1) .list-item-rank {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+.list-item:nth-child(2) .list-item-rank {
+  background-color: #fff7e6;
+  color: #faad14;
+}
+
+.list-item:nth-child(3) .list-item-rank {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.list-item-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 8px;
 }
 
 .dashboard-loading {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  min-height: 400px;
 }
 
 .dashboard-error {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  min-height: 400px;
   color: #ff4d4f;
   font-size: 16px;
   font-weight: 500;
@@ -118,4 +231,74 @@
   text-align: center;
   margin-top: 24px;
   font-style: italic;
+}
+
+/* 等高容器样式 */
+.equal-height-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.equal-height-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-height-card .ant-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.equal-height-card .ant-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-height-card .ant-spin-nested-loading,
+.equal-height-card .ant-spin-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-height-card .ant-list-items {
+  flex: 1;
+  overflow: auto;
+}
+
+/* 图表卡片样式 */
+.chart-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.chart-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.chart-card .ant-card-body {
+  padding: 16px;
+  height: calc(100% - 57px);
+}
+
+.dashboard-row {
+  margin-top: 24px;
+}
+
+.no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  color: #8c8c8c;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
 }

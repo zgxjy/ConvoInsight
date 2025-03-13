@@ -106,6 +106,12 @@ def get_dashboard_data():
                 ],
                 "Top_hotwords": [
                     {"word": str, "count": int,"percentage": float}
+                ],
+                "tag_resolution_rates": [
+                    {"tag": str, "resolved": float, "partially_resolved": float, "unresolved": float, "count": int}
+                ],
+                "tag_cooccurrence": [
+                    {"tag_pair": [str, str], "count": int, "percentage": float}
                 ]
             },
             "message": str (optional)
@@ -189,6 +195,100 @@ def get_dashboard_data():
         for hotword in top_hotword:
             hotword['percentage'] = (hotword['count'] / total_conversations) * 100
         
+        # 计算标签解决率分布
+        tag_resolution_rates = []
+        top_tags_list = [tag['_id'] for tag in top_tag[:10]]  # 只取前10个标签
+        
+        for tag_name in top_tags_list:
+            # 查询包含该标签的会话
+            tag_conversations = list(db.conversations.find({'tags': tag_name}))
+            tag_count = len(tag_conversations)
+            
+            if tag_count == 0:
+                continue
+                
+            # 统计不同解决状态的数量
+            resolved_count = 0
+            partially_resolved_count = 0
+            unresolved_count = 0
+            
+            for conv in tag_conversations:
+                resolution_status = conv.get('conversationSummary', {}).get('resolutionStatus', {}).get('status', '')
+                if resolution_status.lower() == '已解决':
+                    resolved_count += 1
+                elif resolution_status.lower() == '部分解决':
+                    partially_resolved_count += 1
+                else:
+                    unresolved_count += 1
+            
+            # 计算百分比
+            tag_resolution_rates.append({
+                'tag': tag_name,
+                'resolved': (resolved_count / tag_count) * 100,
+                'partially_resolved': (partially_resolved_count / tag_count) * 100,
+                'unresolved': (unresolved_count / tag_count) * 100,
+                'count': tag_count
+            })
+        
+        # 计算标签共现网络
+        tag_cooccurrence = []
+        
+        # 聚合查询获取标签对
+        tag_pairs_cursor = db.conversations.aggregate([
+            {'$match': {'tags': {'$exists': True, '$ne': []}}},
+            {'$project': {'tags': 1}},
+            {'$unwind': '$tags'},
+            {'$unwind': {
+                'path': '$tags',
+                'includeArrayIndex': 'tagIndex'
+            }},
+            {'$group': {
+                '_id': {'conv_id': '$_id', 'tag': '$tags'},
+                'tagIndex': {'$first': '$tagIndex'}
+            }},
+            {'$group': {
+                '_id': '$_id.conv_id',
+                'tags': {'$push': '$_id.tag'}
+            }},
+            {'$match': {'tags.1': {'$exists': True}}},  # 至少有2个标签
+            {'$project': {
+                'tagPairs': {
+                    '$reduce': {
+                        'input': {'$range': [0, {'$size': '$tags'}]},
+                        'initialValue': [],
+                        'in': {
+                            '$concatArrays': [
+                                '$$value',
+                                {
+                                    '$map': {
+                                        'input': {'$range': [{'$add': ['$$this', 1]}, {'$size': '$tags'}]},
+                                        'as': 'j',
+                                        'in': [{'$arrayElemAt': ['$tags', '$$this']}, {'$arrayElemAt': ['$tags', '$$j']}]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }},
+            {'$unwind': '$tagPairs'},
+            {'$group': {
+                '_id': '$tagPairs',
+                'count': {'$sum': 1}
+            }},
+            {'$sort': {'count': -1}},
+            {'$limit': 10}
+        ])
+        
+        tag_pairs_result = list(tag_pairs_cursor)
+        
+        for pair in tag_pairs_result:
+            tag_cooccurrence.append({
+                'tag_pair': pair['_id'],
+                'count': pair['count'],
+                'percentage': (pair['count'] / total_conversations) * 100
+            })
+        
         # 构建响应
         return jsonify(make_response(
             success=True,
@@ -206,7 +306,9 @@ def get_dashboard_data():
                     "avg_risk": avg_risk
                 },
                 "Top_tags": top_tag,
-                "Top_hotwords": top_hotword
+                "Top_hotwords": top_hotword,
+                "tag_resolution_rates": tag_resolution_rates,
+                "tag_cooccurrence": tag_cooccurrence
             }
         ))
     except Exception as e:

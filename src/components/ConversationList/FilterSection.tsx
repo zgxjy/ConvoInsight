@@ -142,7 +142,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           loading={loading}
           maxTagCount={3}
           tagRender={(props) => {
-            const { label, value, closable, onClose } = props;
+            const { label, closable, onClose } = props;
             return (
               <Tag 
                 color="#1677ff"

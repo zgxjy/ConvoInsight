@@ -160,6 +160,18 @@ export interface DashboardData {
     count: number;
     percentage: number;
   }>;
+  tag_resolution_rates: Array<{
+    tag: string;
+    resolved: number;
+    partially_resolved: number;
+    unresolved: number;
+    count: number;
+  }>;
+  tag_cooccurrence: Array<{
+    tag_pair: [string, string];
+    count: number;
+    percentage: number;
+  }>;
 }
 
 export const fetchDashboardData = async (): Promise<ApiResponse<DashboardData>> => {

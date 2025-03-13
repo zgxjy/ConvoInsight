@@ -28,5 +28,6 @@ if __name__ == '__main__':
     app.run(
         host='0.0.0.0',
         port=app.config['PORT'],
-        debug=app.config['DEBUG']
+        debug=app.config['DEBUG'],
+        use_reloader=False  # 禁用自动重载功能
     )
