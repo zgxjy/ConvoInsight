@@ -171,6 +171,18 @@ export interface DashboardData {
     count: number;
     percentage: number;
   }>;
+  agent_service_rates: Array<{
+    agent: string;
+    count: number;
+    resolved: number;
+    partially_resolved: number;
+    unresolved: number;
+    avg_satisfaction: number;
+    avg_resolution: number;
+    avg_attitude: number;
+    avg_risk: number;
+    overall_performance: number;
+  }>;
 }
 
 export const fetchDashboardData = async (): Promise<TagApiResponse<DashboardData>> => {

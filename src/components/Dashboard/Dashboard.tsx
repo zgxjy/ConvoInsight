@@ -332,7 +332,7 @@ const Dashboard: React.FC = () => {
           </section>
         </Col>
       </Row>
-      
+
       <Row gutter={[24, 24]} className="dashboard-row">
         <Col xs={24} lg={12}>
           <section className="dashboard-section">
@@ -351,6 +351,7 @@ const Dashboard: React.FC = () => {
                         title: '标签',
                         dataIndex: 'tag',
                         key: 'tag',
+                        fixed: 'left',
                         render: (text) => (
                           <Tag 
                             color="#1677ff" 
@@ -441,7 +442,7 @@ const Dashboard: React.FC = () => {
                             </div>
                           </div>
                         )
-                      },
+                      }
                     ]}
                     dataSource={dashboardData.tag_resolution_rates.map((item: any, index: number) => ({
                       key: index,
@@ -568,6 +569,205 @@ const Dashboard: React.FC = () => {
         </Col>
       </Row>
       
+      <Row gutter={[24, 24]} className="dashboard-row">
+        <Col xs={24}>
+          <section className="dashboard-section">
+            <h2 className="section-title">
+              客服表现分析
+              <Tooltip title="展示各客服的服务表现，包括解决率、满意度和综合表现评分">
+                <InfoCircleOutlined style={{ marginLeft: '8px', color: '#8c8c8c' }} />
+              </Tooltip>
+            </h2>
+            <Card className="chart-card">
+              {dashboardData.agent_service_rates && dashboardData.agent_service_rates.length > 0 ? (
+                <div style={{ height: 400, overflow: 'auto' }}>
+                  <Table
+                    columns={[
+                      {
+                        title: '客服',
+                        dataIndex: 'agent',
+                        key: 'agent',
+                        fixed: 'left',
+                        sorter: (a, b) => a.agent.localeCompare(b.agent),
+                        render: (text) => (
+                          <div style={{ fontWeight: 600, color: '#1677ff' }}>
+                            {text}
+                          </div>
+                        )
+                      },
+                      {
+                        title: '处理会话数',
+                        dataIndex: 'count',
+                        key: 'count',
+                        sorter: (a, b) => a.count - b.count,
+                        render: (value) => (
+                          <div style={{ textAlign: 'center', fontWeight: 600 }}>
+                            {value}
+                          </div>
+                        )
+                      },
+                      {
+                        title: '综合表现',
+                        dataIndex: 'overall_performance',
+                        key: 'overall_performance',
+                        sorter: (a, b) => a.overall_performance - b.overall_performance,
+                        render: (value) => (
+                          <div>
+                            <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                              <div 
+                                style={{ 
+                                  width: `${value}%`, 
+                                  backgroundColor: getColorByScore(value), 
+                                  height: '8px', 
+                                  borderRadius: '4px' 
+                                }} 
+                              />
+                            </div>
+                            <div style={{ textAlign: 'right', fontSize: '14px', fontWeight: 600, color: getColorByScore(value) }}>
+                              {Math.round(value)}分
+                            </div>
+                          </div>
+                        )
+                      },
+                      {
+                        title: '已解决率',
+                        dataIndex: 'resolved',
+                        key: 'resolved',
+                        sorter: (a, b) => a.resolved - b.resolved,
+                        render: (value) => (
+                          <div>
+                            <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                              <div 
+                                style={{ 
+                                  width: `${value}%`, 
+                                  backgroundColor: '#52c41a', 
+                                  height: '8px', 
+                                  borderRadius: '4px' 
+                                }} 
+                              />
+                            </div>
+                            <div style={{ textAlign: 'right', fontSize: '12px', color: '#595959' }}>
+                              {Math.round(value)}%
+                            </div>
+                          </div>
+                        )
+                      },
+                      {
+                        title: '部分解决率',
+                        dataIndex: 'partially_resolved',
+                        key: 'partially_resolved',
+                        sorter: (a, b) => a.partially_resolved - b.partially_resolved,
+                        render: (value) => (
+                          <div>
+                            <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                              <div 
+                                style={{ 
+                                  width: `${value}%`, 
+                                  backgroundColor: '#faad14', 
+                                  height: '8px', 
+                                  borderRadius: '4px' 
+                                }} 
+                              />
+                            </div>
+                            <div style={{ textAlign: 'right', fontSize: '12px', color: '#595959' }}>
+                              {Math.round(value)}%
+                            </div>
+                          </div>
+                        )
+                      },
+                      {
+                        title: '未解决率',
+                        dataIndex: 'unresolved',
+                        key: 'unresolved',
+                        sorter: (a, b) => a.unresolved - b.unresolved,
+                        render: (value) => (
+                          <div>
+                            <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                              <div 
+                                style={{ 
+                                  width: `${value}%`, 
+                                  backgroundColor: '#ff4d4f', 
+                                  height: '8px', 
+                                  borderRadius: '4px' 
+                                }} 
+                              />
+                            </div>
+                            <div style={{ textAlign: 'right', fontSize: '12px', color: '#595959' }}>
+                              {Math.round(value)}%
+                            </div>
+                          </div>
+                        )
+                      },
+                      {
+                        title: '满意度',
+                        dataIndex: 'avg_satisfaction',
+                        key: 'avg_satisfaction',
+                        sorter: (a, b) => a.avg_satisfaction - b.avg_satisfaction,
+                        render: (value) => (
+                          <div style={{ textAlign: 'center', fontWeight: 600, color: getColorByScore(value) }}>
+                            {Math.round(value)}
+                          </div>
+                        )
+                      },
+                      {
+                        title: '解决度',
+                        dataIndex: 'avg_resolution',
+                        key: 'avg_resolution',
+                        sorter: (a, b) => a.avg_resolution - b.avg_resolution,
+                        render: (value) => (
+                          <div style={{ textAlign: 'center', fontWeight: 600, color: getColorByScore(value) }}>
+                            {Math.round(value)}
+                          </div>
+                        )
+                      },
+                      {
+                        title: '服务态度',
+                        dataIndex: 'avg_attitude',
+                        key: 'avg_attitude',
+                        sorter: (a, b) => a.avg_attitude - b.avg_attitude,
+                        render: (value) => (
+                          <div style={{ textAlign: 'center', fontWeight: 600, color: getColorByScore(value) }}>
+                            {Math.round(value)}
+                          </div>
+                        )
+                      },
+                      {
+                        title: '安全指数',
+                        dataIndex: 'avg_risk',
+                        key: 'avg_risk',
+                        sorter: (a, b) => a.avg_risk - b.avg_risk,
+                        render: (value) => (
+                          <div style={{ textAlign: 'center', fontWeight: 600, color: getColorByScore(value) }}>
+                            {Math.round(value)}
+                          </div>
+                        )
+                      }
+                    ]}
+                    dataSource={dashboardData.agent_service_rates.map((item: any, index: number) => ({
+                      key: index,
+                      agent: item.agent,
+                      count: item.count,
+                      resolved: item.resolved,
+                      partially_resolved: item.partially_resolved,
+                      unresolved: item.unresolved,
+                      avg_satisfaction: item.avg_satisfaction,
+                      avg_resolution: item.avg_resolution,
+                      avg_attitude: item.avg_attitude,
+                      avg_risk: item.avg_risk,
+                      overall_performance: item.overall_performance
+                    }))}
+                    pagination={false}
+                    scroll={{ x: 1300 }}
+                    size="small"
+                  />
+                </div>
+              ) : (
+                <div className="no-data">暂无数据</div>
+              )}
+            </Card>
+          </section>
+        </Col>
+      </Row>
     </div>
   );
 };

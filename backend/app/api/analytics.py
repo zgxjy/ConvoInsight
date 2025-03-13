@@ -112,6 +112,12 @@ def get_dashboard_data():
                 ],
                 "tag_cooccurrence": [
                     {"tag_pair": [str, str], "count": int, "percentage": float}
+                ],
+                "agent_service_rates": [
+                    {"agent": str,"count": int,"resolved": float, "partially_resolved": float, "unresolved": float, 
+                    "avg_satisfaction": float, "avg_resolution": float, "avg_attitude": float, "avg_risk": float,
+                    "overall_performance": float
+                    }
                 ]
             },
             "message": str (optional)
@@ -145,29 +151,29 @@ def get_dashboard_data():
         avg_user_messages = avg_user_messages_result[0]['avg_user_messages'] if avg_user_messages_result else 0
 
         # 计算平均指标
-        avg_satisfaction_cursor = db.conversations.aggregate([
+        global_avg_satisfaction_cursor = db.conversations.aggregate([
             {'$group': {'_id': None, 'avg_satisfaction': {'$avg': '$metrics.satisfaction.value'}}}
         ])
-        avg_satisfaction_result = list(avg_satisfaction_cursor)
-        avg_satisfaction = avg_satisfaction_result[0]['avg_satisfaction'] if avg_satisfaction_result else 0
+        global_avg_satisfaction_result = list(global_avg_satisfaction_cursor)
+        global_avg_satisfaction = global_avg_satisfaction_result[0]['avg_satisfaction'] if global_avg_satisfaction_result else 0
         
-        avg_resolution_cursor = db.conversations.aggregate([
+        global_avg_resolution_cursor = db.conversations.aggregate([
             {'$group': {'_id': None, 'avg_resolution': {'$avg': '$metrics.resolution.value'}}}
         ])
-        avg_resolution_result = list(avg_resolution_cursor)
-        avg_resolution = avg_resolution_result[0]['avg_resolution'] if avg_resolution_result else 0
+        global_avg_resolution_result = list(global_avg_resolution_cursor)
+        global_avg_resolution = global_avg_resolution_result[0]['avg_resolution'] if global_avg_resolution_result else 0
         
-        avg_attitude_cursor = db.conversations.aggregate([
+        global_avg_attitude_cursor = db.conversations.aggregate([
             {'$group': {'_id': None, 'avg_attitude': {'$avg': '$metrics.attitude.value'}}}
         ])
-        avg_attitude_result = list(avg_attitude_cursor)
-        avg_attitude = avg_attitude_result[0]['avg_attitude'] if avg_attitude_result else 0
+        global_avg_attitude_result = list(global_avg_attitude_cursor)
+        global_avg_attitude = global_avg_attitude_result[0]['avg_attitude'] if global_avg_attitude_result else 0
         
-        avg_risk_cursor = db.conversations.aggregate([
+        global_avg_risk_cursor = db.conversations.aggregate([
             {'$group': {'_id': None, 'avg_risk': {'$avg': '$metrics.risk.value'}}}
         ])
-        avg_risk_result = list(avg_risk_cursor)
-        avg_risk = avg_risk_result[0]['avg_risk'] if avg_risk_result else 0
+        global_avg_risk_result = list(global_avg_risk_cursor)
+        global_avg_risk = global_avg_risk_result[0]['avg_risk'] if global_avg_risk_result else 0
 
         # 获取Top标签
         top_tag_cursor = db.conversations.aggregate([
@@ -297,6 +303,76 @@ def get_dashboard_data():
                 'percentage': (pair['count'] / total_conversations) * 100
             })
         
+        # 计算客服服务指标
+        agent_service_rates = []
+        
+        # 获取所有客服
+        agents = db.conversations.distinct('agent')
+        
+        for agent_name in agents:
+            # 查询该客服处理的所有会话
+            agent_conversations = list(db.conversations.find({'agent': agent_name}))
+            agent_conv_count = len(agent_conversations)
+            
+            if agent_conv_count == 0:
+                continue
+                
+            # 统计不同解决状态的数量
+            resolved_count = 0
+            partially_resolved_count = 0
+            unresolved_count = 0
+            
+            # 计算平均指标
+            agent_total_satisfaction = 0
+            agent_total_resolution = 0
+            agent_total_attitude = 0
+            agent_total_risk = 0
+            
+            for conv in agent_conversations:
+                # 统计解决状态
+                resolution_status = conv.get('conversationSummary', {}).get('resolutionStatus', {}).get('status', '')
+                if resolution_status.lower() == '已解决':
+                    resolved_count += 1
+                elif resolution_status.lower() == '部分解决':
+                    partially_resolved_count += 1
+                else:
+                    unresolved_count += 1
+                
+                # 累加各项指标
+                metrics = conv.get('metrics', {})
+                agent_total_satisfaction += metrics.get('satisfaction', {}).get('value', 0)
+                agent_total_resolution += metrics.get('resolution', {}).get('value', 0)
+                agent_total_attitude += metrics.get('attitude', {}).get('value', 0)
+                agent_total_risk += metrics.get('risk', {}).get('value', 0)
+            
+            # 计算客服的各项平均指标
+            agent_avg_satisfaction = agent_total_satisfaction / agent_conv_count if agent_conv_count > 0 else 0
+            agent_avg_resolution = agent_total_resolution / agent_conv_count if agent_conv_count > 0 else 0
+            agent_avg_attitude = agent_total_attitude / agent_conv_count if agent_conv_count > 0 else 0
+            agent_avg_risk = agent_total_risk / agent_conv_count if agent_conv_count > 0 else 0
+            
+            # 计算综合表现指标
+            overall_performance = (
+                agent_avg_satisfaction * 0.25 + 
+                agent_avg_resolution * 0.25 + 
+                agent_avg_risk * 0.25 + 
+                agent_avg_attitude * 0.15
+            )
+            
+            # 计算平均值和百分比
+            agent_service_rates.append({
+                'agent': agent_name,
+                'count': agent_conv_count,
+                'resolved': (resolved_count / agent_conv_count) * 100,
+                'partially_resolved': (partially_resolved_count / agent_conv_count) * 100,
+                'unresolved': (unresolved_count / agent_conv_count) * 100,
+                'avg_satisfaction': agent_avg_satisfaction,
+                'avg_resolution': agent_avg_resolution,
+                'avg_attitude': agent_avg_attitude,
+                'avg_risk': agent_avg_risk,
+                'overall_performance': overall_performance
+            })
+        
         # 构建响应
         return jsonify(make_response(
             success=True,
@@ -308,15 +384,16 @@ def get_dashboard_data():
                     "avg_userMessages": avg_user_messages
                 },
                 "conversationMetrics": {
-                    "avg_satisfaction": avg_satisfaction,
-                    "avg_resolution": avg_resolution,
-                    "avg_attitude": avg_attitude,
-                    "avg_risk": avg_risk
+                    "avg_satisfaction": global_avg_satisfaction,
+                    "avg_resolution": global_avg_resolution,
+                    "avg_attitude": global_avg_attitude,
+                    "avg_risk": global_avg_risk
                 },
                 "Top_tags": top_tag,
                 "Top_hotwords": top_hotword,
                 "tag_resolution_rates": tag_resolution_rates,
-                "tag_cooccurrence": tag_cooccurrence
+                "tag_cooccurrence": tag_cooccurrence,
+                "agent_service_rates": agent_service_rates
             }
         ))
     except Exception as e:

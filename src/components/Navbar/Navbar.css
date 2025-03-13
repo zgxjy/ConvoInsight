@@ -1,45 +1,178 @@
 .navbar {
-  display: flex;
-  align-items: center;
+  width: 100%;
   height: 64px;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
   padding: 0 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logo-text {
   font-size: 20px;
   font-weight: 600;
-  margin-right: 48px;
   color: #1677ff;
+  white-space: nowrap;
+  margin-right: 48px;
 }
 
-.nav-menu {
-  flex: 1;
+.desktop-menu {
   display: flex;
-  justify-content: center;
-  border-bottom: none;
+  align-items: center;
 }
 
-.ant-menu-item a {
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-link {
   font-size: 14px;
   font-weight: 500;
+  color: #595959;
+  text-decoration: none;
+  position: relative;
+  padding: 0 4px;
+  height: 64px;
+  display: flex;
+  align-items: center;
 }
 
-.ant-menu-item-selected a {
+.nav-link:hover {
   color: #1677ff;
 }
 
+.nav-link.active {
+  color: #1677ff;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1677ff;
+}
+
+.mobile-menu {
+  display: none;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.mobile-menu-button {
+  font-size: 18px;
+  padding: 4px 12px;
+  height: auto;
+}
+
+/* 抽屉菜单样式 */
+.drawer-nav-links {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+}
+
+.drawer-nav-link {
+  padding: 12px 24px;
+  font-size: 16px;
+  color: #595959;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+
+.drawer-nav-link:hover {
+  background-color: #f5f5f5;
+  color: #1677ff;
+}
+
+.drawer-nav-link.active {
+  color: #1677ff;
+  background-color: #e6f7ff;
+  border-left: 3px solid #1677ff;
+}
+
+/* 响应式设计 */
 @media (max-width: 768px) {
-  .navbar {
+  .navbar-container {
     padding: 0 16px;
   }
   
-  .logo {
-    margin-right: 24px;
+  .desktop-menu {
+    display: none;
   }
   
-  .nav-menu {
-    justify-content: flex-start;
+  .mobile-menu {
+    display: block;
   }
+}
+
+/* 平板设备适配 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .navbar-container {
+    padding: 0 20px;
+  }
+  
+  .nav-links {
+    gap: 24px;
+  }
+  
+  .logo-text {
+    margin-right: 32px;
+  }
+}
+
+/* 修复 Ant Design 样式 */
+:where(.css-dev-only-do-not-override-1wazalj).ant-menu-light.ant-menu-horizontal >.ant-menu-item-selected,
+:where(.css-dev-only-do-not-override-1wazalj).ant-menu-light.ant-menu-horizontal >.ant-menu-item:hover {
+  color: #1677ff;
+}
+
+:where(.css-dev-only-do-not-override-1wazalj).ant-menu-light.ant-menu-horizontal >.ant-menu-item-selected::after,
+:where(.css-dev-only-do-not-override-1wazalj).ant-menu-light.ant-menu-horizontal >.ant-menu-item:hover::after {
+  border-bottom-color: #1677ff;
+}
+
+:where(.css-dev-only-do-not-override-1wazalj).ant-menu-light.ant-menu-horizontal >.ant-menu-item a {
+  color: #595959;
+}
+
+:where(.css-dev-only-do-not-override-1wazalj).ant-menu-light.ant-menu-horizontal >.ant-menu-item-selected a {
+  color: #1677ff;
+}
+
+/* 抽屉菜单样式 */
+.ant-drawer-body {
+  padding: 16px 0;
+}
+
+.ant-drawer-body .ant-menu-vertical {
+  border-right: none;
+}
+
+.ant-drawer-body .ant-menu-item {
+  height: 48px;
+  line-height: 48px;
+  margin: 0;
+  padding-left: 24px;
 }

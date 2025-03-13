@@ -1,34 +1,118 @@
-import React from 'react';
-import { Layout, Menu } from 'antd';
+import React, { useState } from 'react';
+import { Layout, Button, Drawer } from 'antd';
 import { NavLink, useLocation } from 'react-router-dom';
+import { 
+  MenuOutlined
+} from '@ant-design/icons';
 import './Navbar.css';
 
 const { Header } = Layout;
 
 const Navbar: React.FC = () => {
   const location = useLocation();
-  
+  const [visible, setVisible] = useState(false);
+
+  // 判断当前路径是否匹配某个路由模式
+  const isActive = (pathPattern: string): boolean => {
+    if (pathPattern === '/conversations') {
+      return location.pathname === '/conversations';
+    } else if (pathPattern === '/conversation') {
+      return location.pathname.startsWith('/conversation/');
+    } else if (pathPattern === '/dashboard') {
+      return location.pathname === '/dashboard';
+    } else if (pathPattern === '/tag-analysis') {
+      return location.pathname.startsWith('/tag-analysis/');
+    }
+    return false;
+  };
+
   return (
     <Header className="navbar">
-      <div className="logo">ConvoInsight</div>
-      <Menu
-        mode="horizontal"
-        selectedKeys={[location.pathname]}
-        className="nav-menu"
+      <div className="navbar-container">
+        <div className="logo">
+          <span className="logo-text">ConvoInsight</span>
+        </div>
+        
+        {/* 桌面版导航 - 平铺靠左 */}
+        <div className="desktop-menu">
+          <nav className="nav-links">
+            <NavLink 
+              to="/conversations" 
+              className={`nav-link ${isActive('/conversations') ? 'active' : ''}`}
+            >
+              会话列表
+            </NavLink>
+            <NavLink 
+              to={location.pathname.startsWith('/conversation/') ? location.pathname : '/conversations'} 
+              className={`nav-link ${isActive('/conversation') ? 'active' : ''}`}
+            >
+              会话详情
+            </NavLink>
+            <NavLink 
+              to="/dashboard" 
+              className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
+            >
+              分析看板
+            </NavLink>
+            <NavLink 
+              to={location.pathname.startsWith('/tag-analysis/') ? location.pathname : '/dashboard'} 
+              className={`nav-link ${isActive('/tag-analysis') ? 'active' : ''}`}
+            >
+              标签分析
+            </NavLink>
+          </nav>
+        </div>
+        
+        {/* 移动版导航按钮 */}
+        <div className="mobile-menu">
+          <Button 
+            type="text" 
+            icon={<MenuOutlined />} 
+            onClick={() => setVisible(true)} 
+            className="mobile-menu-button"
+          />
+        </div>
+      </div>
+      
+      {/* 移动版抽屉菜单 */}
+      <Drawer
+        title="ConvoInsight 导航"
+        placement="right"
+        onClose={() => setVisible(false)}
+        open={visible}
+        width={250}
       >
-        <Menu.Item key="/conversations">
-          <NavLink to="/conversations">会话列表</NavLink>
-        </Menu.Item>
-        <Menu.Item key="/conversation">
-          {/* 这个链接在没有具体会话ID时不会高亮，但保留在导航中 */}
-          <NavLink to={location.pathname.startsWith('/conversation/') ? location.pathname : '/conversations'}>
+        <nav className="drawer-nav-links">
+          <NavLink 
+            to="/conversations" 
+            className={`drawer-nav-link ${isActive('/conversations') ? 'active' : ''}`}
+            onClick={() => setVisible(false)}
+          >
+            会话列表
+          </NavLink>
+          <NavLink 
+            to={location.pathname.startsWith('/conversation/') ? location.pathname : '/conversations'} 
+            className={`drawer-nav-link ${isActive('/conversation') ? 'active' : ''}`}
+            onClick={() => setVisible(false)}
+          >
             会话详情
           </NavLink>
-        </Menu.Item>
-        <Menu.Item key="/dashboard">
-          <NavLink to="/dashboard">分析看板</NavLink>
-        </Menu.Item>
-      </Menu>
+          <NavLink 
+            to="/dashboard" 
+            className={`drawer-nav-link ${isActive('/dashboard') ? 'active' : ''}`}
+            onClick={() => setVisible(false)}
+          >
+            分析看板
+          </NavLink>
+          <NavLink 
+            to={location.pathname.startsWith('/tag-analysis/') ? location.pathname : '/dashboard'} 
+            className={`drawer-nav-link ${isActive('/tag-analysis') ? 'active' : ''}`}
+            onClick={() => setVisible(false)}
+          >
+            标签分析
+          </NavLink>
+        </nav>
+      </Drawer>
     </Header>
   );
 };
