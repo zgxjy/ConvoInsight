@@ -466,3 +466,45 @@ export const fetchAgentList = async (): Promise<AgentListItem[]> => {
     throw error;
   }
 };
+
+// 标签列表项接口
+export interface TagListItem {
+  tag: string;
+  count: number;
+  resolved: number;
+  partially_resolved: number;
+  unresolved: number;
+  avg_satisfaction: number;
+  avg_resolution: number;
+}
+
+// 获取所有标签列表的API
+export const fetchTagList = async (): Promise<TagListItem[]> => {
+  try {
+    // 获取仪表盘数据，其中包含tag_resolution_rates
+    const dashboardResponse = await axios.get(`${API_BASE_URL}/dashboard`);
+    const dashboardResult = dashboardResponse.data;
+    
+    if (!dashboardResult.success) {
+      throw new Error(dashboardResult.message || '获取标签列表失败');
+    }
+    
+    // 从仪表盘数据中提取标签解决率数据
+    const tagResolutionRates = dashboardResult.data.tag_resolution_rates || [];
+    
+    // 转换为TagListItem格式
+    return tagResolutionRates.map((item: any) => ({
+      tag: item.tag,
+      count: item.count || 0,
+      resolved: item.resolved || 0,
+      partially_resolved: item.partially_resolved || 0,
+      unresolved: item.unresolved || 0,
+      // 估算满意度和解决度（模拟数据）
+      avg_satisfaction: Math.round((item.resolved * 90 + item.partially_resolved * 60 + item.unresolved * 30) / 100),
+      avg_resolution: Math.round((item.resolved * 95 + item.partially_resolved * 50) / 100)
+    }));
+  } catch (error) {
+    console.error('获取标签列表出错:', error);
+    throw error;
+  }
+};

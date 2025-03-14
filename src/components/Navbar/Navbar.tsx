@@ -16,12 +16,10 @@ const Navbar: React.FC = () => {
   const isActive = (pathPattern: string): boolean => {
     if (pathPattern === '/conversations') {
       return location.pathname === '/conversations';
-    } else if (pathPattern === '/conversation') {
-      return location.pathname.startsWith('/conversation/');
     } else if (pathPattern === '/dashboard') {
       return location.pathname === '/dashboard';
     } else if (pathPattern === '/tag-analysis') {
-      return location.pathname.startsWith('/tag-analysis/');
+      return location.pathname === '/tag-analysis' || location.pathname.startsWith('/tag-analysis/');
     } else if (pathPattern === '/agents') {
       return location.pathname === '/agents';
     } else if (pathPattern === '/agent') {
@@ -47,19 +45,13 @@ const Navbar: React.FC = () => {
               会话列表
             </NavLink>
             <NavLink 
-              to={location.pathname.startsWith('/conversation/') ? location.pathname : '/conversations'} 
-              className={`nav-link ${isActive('/conversation') ? 'active' : ''}`}
-            >
-              会话详情
-            </NavLink>
-            <NavLink 
               to="/dashboard" 
               className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
             >
               分析看板
             </NavLink>
             <NavLink 
-              to={location.pathname.startsWith('/tag-analysis/') ? location.pathname : '/dashboard'} 
+              to={location.pathname.startsWith('/tag-analysis/') ? location.pathname : '/tag-analysis'} 
               className={`nav-link ${isActive('/tag-analysis') ? 'active' : ''}`}
             >
               标签分析
@@ -101,13 +93,6 @@ const Navbar: React.FC = () => {
             会话列表
           </NavLink>
           <NavLink 
-            to={location.pathname.startsWith('/conversation/') ? location.pathname : '/conversations'} 
-            className={`drawer-nav-link ${isActive('/conversation') ? 'active' : ''}`}
-            onClick={() => setVisible(false)}
-          >
-            会话详情
-          </NavLink>
-          <NavLink 
             to="/dashboard" 
             className={`drawer-nav-link ${isActive('/dashboard') ? 'active' : ''}`}
             onClick={() => setVisible(false)}
@@ -115,7 +100,7 @@ const Navbar: React.FC = () => {
             分析看板
           </NavLink>
           <NavLink 
-            to={location.pathname.startsWith('/tag-analysis/') ? location.pathname : '/dashboard'} 
+            to={location.pathname.startsWith('/tag-analysis/') ? location.pathname : '/tag-analysis'} 
             className={`drawer-nav-link ${isActive('/tag-analysis') ? 'active' : ''}`}
             onClick={() => setVisible(false)}
           >

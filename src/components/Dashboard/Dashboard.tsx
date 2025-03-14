@@ -341,6 +341,14 @@ const Dashboard: React.FC = () => {
               <Tooltip title="展示不同标签的问题解决情况，包括已解决、部分解决和未解决的比例">
                 <InfoCircleOutlined style={{ marginLeft: '8px', color: '#8c8c8c' }} />
               </Tooltip>
+              <Button 
+                type="primary" 
+                size="small" 
+                onClick={() => navigate('/tag-analysis')}
+                style={{ marginLeft: '16px' }}
+              >
+                查看所有标签
+              </Button>
             </h2>
             <Card className="chart-card">
               {dashboardData.tag_resolution_rates && dashboardData.tag_resolution_rates.length > 0 ? (

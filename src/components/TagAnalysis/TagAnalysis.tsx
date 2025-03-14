@@ -74,7 +74,7 @@ const TagAnalysis: React.FC = () => {
   }, [loadTagData]);
 
   const handleBack = () => {
-    navigate('/dashboard');
+    navigate('/tag-analysis');
   };
 
   const handleSearch = (value: string) => {
@@ -115,6 +115,7 @@ const TagAnalysis: React.FC = () => {
   const handleTableChange = (pagination: any) => {
     setPage(pagination.current);
     setPageSize(pagination.pageSize);
+    loadTagData(pagination.current, pagination.pageSize, filters);
   };
 
   // 自定义评分组件，确保统一的样式
@@ -163,7 +164,7 @@ const TagAnalysis: React.FC = () => {
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         />
         <Button type="primary" onClick={handleBack} style={{ marginTop: 16 }}>
-          返回仪表盘
+          返回标签列表
         </Button>
       </div>
     );
@@ -178,7 +179,7 @@ const TagAnalysis: React.FC = () => {
           onClick={handleBack}
           style={{ marginRight: 8, fontSize: '16px' }}
         >
-          返回仪表盘
+          返回标签列表
         </Button>
         <h1>
           <Tag color="#1677ff" style={{ fontSize: '16px', padding: '4px 8px' }}>
@@ -468,9 +469,10 @@ const TagAnalysis: React.FC = () => {
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '50'],
             showTotal: (total) => `共 ${total} 个会话`,
-            onChange: (page, pageSize) => {
+            onChange: (page, newPageSize) => {
               setPage(page);
-              setPageSize(pageSize);
+              setPageSize(newPageSize);
+              loadTagData(page, newPageSize, filters);
             }
           }}
           onChange={handleTableChange}

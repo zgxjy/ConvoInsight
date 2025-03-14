@@ -173,3 +173,47 @@
   font-weight: 600;
   color: #595959;
 }
+
+/* 标签列表页面样式 */
+.tag-list-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tag-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.tag-list-header h1 {
+  margin: 0 0 0 16px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.back-button {
+  margin-right: 8px;
+}
+
+.tag-list-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.loading-container, 
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.score-progress {
+  width: 100%;
+}
