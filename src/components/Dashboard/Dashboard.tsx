@@ -241,21 +241,21 @@ const Dashboard: React.FC = () => {
                     </Tooltip>
                   </div>
                 }
-                value={Math.round(dashboardData.conversationMetrics.avg_risk * 10) / 10} 
+                value={Math.round(dashboardData.conversationMetrics.avg_security * 10) / 10} 
                 suffix="/100"
                 precision={1}
-                valueStyle={{ fontSize: '56px', fontWeight: 800, color: getColorByScore(dashboardData.conversationMetrics.avg_risk) }}
+                valueStyle={{ fontSize: '56px', fontWeight: 800, color: getColorByScore(dashboardData.conversationMetrics.avg_security) }}
               />
               <Progress 
-                percent={dashboardData.conversationMetrics.avg_risk} 
+                percent={dashboardData.conversationMetrics.avg_security} 
                 showInfo={false} 
-                strokeColor={getColorByScore(dashboardData.conversationMetrics.avg_risk)}
+                strokeColor={getColorByScore(dashboardData.conversationMetrics.avg_security)}
                 className="metric-progress"
               />
               <div className="metric-baseline">
                 <span>基准线: 90</span>
                 <span className="metric-trend">
-                  {dashboardData.conversationMetrics.avg_risk >= 90 ? '良好' : '需改进'}
+                  {dashboardData.conversationMetrics.avg_security >= 90 ? '良好' : '需改进'}
                 </span>
               </div>
             </Card>
@@ -752,9 +752,9 @@ const Dashboard: React.FC = () => {
                       },
                       {
                         title: '安全指数',
-                        dataIndex: 'avg_risk',
-                        key: 'avg_risk',
-                        sorter: (a, b) => a.avg_risk - b.avg_risk,
+                        dataIndex: 'avg_security',
+                        key: 'avg_security',
+                        sorter: (a, b) => a.avg_security - b.avg_security,
                         render: (value) => (
                           <div style={{ textAlign: 'center', fontWeight: 600, color: getColorByScore(value) }}>
                             {Math.round(value)}
@@ -772,7 +772,7 @@ const Dashboard: React.FC = () => {
                       avg_satisfaction: item.avg_satisfaction,
                       avg_resolution: item.avg_resolution,
                       avg_attitude: item.avg_attitude,
-                      avg_risk: item.avg_risk,
+                      avg_security: item.avg_security,
                       overall_performance: item.overall_performance
                     }))}
                     pagination={false}

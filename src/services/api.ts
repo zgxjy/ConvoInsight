@@ -6,8 +6,8 @@ import {
 } from '../types/conversationTypes';
 import axios from 'axios';
 
-// API基础URL
-const API_BASE_URL = 'http://localhost:5000/api';
+// API基础URL - 使用相对路径，使其可以被任何域托管
+const API_BASE_URL = '/api';
 
 // 获取会话列表的API
 export const fetchConversationList = async (
@@ -77,21 +77,17 @@ export const fetchConversationDetail = async (id: string): Promise<TagApiRespons
   try {
     console.log('API服务接收到的ID:', id);
     
-    // 处理ID中可能的特殊字符
-    // 如果ID不包含#号但应该包含，则添加#号
-    const normalizedId = id.startsWith('#') ? id : `#${id}`;
-    console.log('标准化后的ID:', normalizedId);
-    
-    // 发送请求，尝试使用标准化后的ID
-    const response = await axios.get(`${API_BASE_URL}/conversations/${encodeURIComponent(normalizedId)}`);
+    // 发送请求，直接使用原始ID
+    const response = await axios.get(`${API_BASE_URL}/conversations/${encodeURIComponent(id)}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('获取会话详情出错:', error);
     
-    // 返回错误响应
+    // 返回更详细的错误响应
+    const errorMessage = error.response?.data?.message || `未找到ID为 ${id} 的会话`;
     return {
       success: false,
-      message: '获取会话详情失败',
+      message: errorMessage,
       data: {} as ConversationData
     };
   }
@@ -147,7 +143,7 @@ export interface DashboardData {
     avg_satisfaction: number;
     avg_resolution: number;
     avg_attitude: number;
-    avg_risk: number;
+    avg_security: number;
   };
   Top_tags: Array<{
     _id: string;
@@ -180,7 +176,7 @@ export interface DashboardData {
     avg_satisfaction: number;
     avg_resolution: number;
     avg_attitude: number;
-    avg_risk: number;
+    avg_security: number;
     overall_performance: number;
   }>;
 }
@@ -216,7 +212,7 @@ export interface TagAnalysisData {
     satisfaction: number;
     resolution: number;
     attitude: number;
-    risk: number;
+    security: number;
   }>;
   pagination: {
     current: number;
@@ -318,7 +314,7 @@ export interface AgentAnalysisData {
     avg_satisfaction: number;
     avg_resolution: number;
     avg_attitude: number;
-    avg_risk: number;
+    avg_security: number;
     overall_performance: number;
     avg_response_time: number;
     avg_resolution_time: number;
@@ -334,7 +330,7 @@ export interface AgentAnalysisData {
     satisfaction: number;
     resolution: number;
     attitude: number;
-    risk: number;
+    security: number;
     tags: string[];
   }>;
   pagination: {
@@ -431,7 +427,7 @@ export interface AgentListItem {
   avg_satisfaction: number;
   avg_resolution: number;
   avg_attitude: number;
-  avg_risk: number;
+  avg_security: number;
   overall_performance: number;
 }
 

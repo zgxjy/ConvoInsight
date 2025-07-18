@@ -25,7 +25,7 @@ interface TagAnalysisData {
     satisfaction: number;
     resolution: number;
     attitude: number;
-    risk: number;
+    security: number;
   }>;
   pagination: {
     current: number;
@@ -444,9 +444,9 @@ const TagAnalysis: React.FC = () => {
               render: (value) => <ScoreProgress value={value} />
             },
             {
-              title: '风险度',
-              dataIndex: 'risk',
-              key: 'risk',
+              title: '安全度',
+              dataIndex: 'security',
+              key: 'security',
               responsive: ['lg'],
               width: 120,
               render: (value) => <ScoreProgress value={value} />

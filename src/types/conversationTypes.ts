@@ -8,7 +8,7 @@ export interface Metrics {
   satisfaction: Metric;    // 客户满意度
   resolution: Metric;      // 服务解决度
   attitude: Metric;        // 服务态度
-  risk: Metric;           // 服务风险性
+  security: Metric;           // 服务安全度
 }
 
 

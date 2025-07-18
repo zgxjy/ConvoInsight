@@ -13,7 +13,7 @@ interface PerformanceMetricsProps {
   satisfaction: MetricItem;
   resolution: MetricItem;
   attitude: MetricItem;
-  risk: MetricItem;
+  security: MetricItem;
 }
 
 interface MetricCardProps {
@@ -54,7 +54,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
   satisfaction,
   resolution,
   attitude,
-  risk
+  security
 }) => {
   return (
     <Card style={{ marginBottom: styles.spacing.xs }}>
@@ -77,8 +77,8 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
         />
         <MetricCard 
           label="安全程度" 
-          value={risk.value} 
-          description={risk.description} 
+          value={security.value} 
+          description={security.description} 
         />
       </div>
     </Card>

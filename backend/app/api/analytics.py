@@ -100,7 +100,7 @@ def get_dashboard_data():
                     "avg_satisfaction": float,
                     "avg_resolution": float,
                     "avg_attitude":float,
-                    "avg_risk":float},
+                    "avg_security":float},
                 "Top_tags": [
                     {"tag": str, "count": int,"percentage": float}
                 ],
@@ -115,7 +115,7 @@ def get_dashboard_data():
                 ],
                 "agent_service_rates": [
                     {"agent": str,"count": int,"resolved": float, "partially_resolved": float, "unresolved": float, 
-                    "avg_satisfaction": float, "avg_resolution": float, "avg_attitude": float, "avg_risk": float,
+                    "avg_satisfaction": float, "avg_resolution": float, "avg_attitude": float, "avg_security": float,
                     "overall_performance": float
                     }
                 ]
@@ -169,11 +169,11 @@ def get_dashboard_data():
         global_avg_attitude_result = list(global_avg_attitude_cursor)
         global_avg_attitude = global_avg_attitude_result[0]['avg_attitude'] if global_avg_attitude_result else 0
         
-        global_avg_risk_cursor = db.conversations.aggregate([
-            {'$group': {'_id': None, 'avg_risk': {'$avg': '$metrics.risk.value'}}}
+        global_avg_security_cursor = db.conversations.aggregate([
+            {'$group': {'_id': None, 'avg_security': {'$avg': '$metrics.security.value'}}}
         ])
-        global_avg_risk_result = list(global_avg_risk_cursor)
-        global_avg_risk = global_avg_risk_result[0]['avg_risk'] if global_avg_risk_result else 0
+        global_avg_security_result = list(global_avg_security_cursor)
+        global_avg_security = global_avg_security_result[0]['avg_security'] if global_avg_security_result else 0
 
         # 获取Top标签
         top_tag_cursor = db.conversations.aggregate([
@@ -326,7 +326,7 @@ def get_dashboard_data():
             agent_total_satisfaction = 0
             agent_total_resolution = 0
             agent_total_attitude = 0
-            agent_total_risk = 0
+            agent_total_security = 0
             
             for conv in agent_conversations:
                 # 统计解决状态
@@ -343,19 +343,19 @@ def get_dashboard_data():
                 agent_total_satisfaction += metrics.get('satisfaction', {}).get('value', 0)
                 agent_total_resolution += metrics.get('resolution', {}).get('value', 0)
                 agent_total_attitude += metrics.get('attitude', {}).get('value', 0)
-                agent_total_risk += metrics.get('risk', {}).get('value', 0)
+                agent_total_security += metrics.get('security', {}).get('value', 0)
             
             # 计算客服的各项平均指标
             agent_avg_satisfaction = agent_total_satisfaction / agent_conv_count if agent_conv_count > 0 else 0
             agent_avg_resolution = agent_total_resolution / agent_conv_count if agent_conv_count > 0 else 0
             agent_avg_attitude = agent_total_attitude / agent_conv_count if agent_conv_count > 0 else 0
-            agent_avg_risk = agent_total_risk / agent_conv_count if agent_conv_count > 0 else 0
+            agent_avg_security = agent_total_security / agent_conv_count if agent_conv_count > 0 else 0
             
             # 计算综合表现指标
             overall_performance = (
                 agent_avg_satisfaction * 0.25 + 
                 agent_avg_resolution * 0.25 + 
-                agent_avg_risk * 0.25 + 
+                agent_avg_security * 0.25 + 
                 agent_avg_attitude * 0.15
             )
             
@@ -369,7 +369,7 @@ def get_dashboard_data():
                 'avg_satisfaction': agent_avg_satisfaction,
                 'avg_resolution': agent_avg_resolution,
                 'avg_attitude': agent_avg_attitude,
-                'avg_risk': agent_avg_risk,
+                'avg_security': agent_avg_security,
                 'overall_performance': overall_performance
             })
         
@@ -387,7 +387,7 @@ def get_dashboard_data():
                     "avg_satisfaction": global_avg_satisfaction,
                     "avg_resolution": global_avg_resolution,
                     "avg_attitude": global_avg_attitude,
-                    "avg_risk": global_avg_risk
+                    "avg_security": global_avg_security
                 },
                 "Top_tags": top_tag,
                 "Top_hotwords": top_hotword,

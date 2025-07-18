@@ -235,11 +235,11 @@ const AgentList: React.FC = () => {
               render: (value) => <ScoreProgress value={value} />
             },
             {
-              title: '风险度',
-              dataIndex: 'avg_risk',
-              key: 'avg_risk',
+              title: '安全度',
+              dataIndex: 'avg_security',
+              key: 'avg_security',
               responsive: ['lg'],
-              sorter: (a, b) => a.avg_risk - b.avg_risk,
+              sorter: (a, b) => a.avg_security - b.avg_security,
               render: (value) => <ScoreProgress value={value} />
             },
             {

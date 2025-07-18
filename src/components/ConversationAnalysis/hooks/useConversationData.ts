@@ -29,11 +29,7 @@ export const useConversationData = (id: string | undefined): UseConversationData
           throw new Error('会话ID不能为空');
         }
         
-        // 确保ID正确解码，处理可能包含特殊字符的ID
-        const decodedId = decodeURIComponent(id);
-        console.log('解码后的ID:', decodedId);
-        
-        const response = await fetchConversationDetail(decodedId);
+        const response = await fetchConversationDetail(id);
         console.log('API响应:', response);
         
         if (response.success) {

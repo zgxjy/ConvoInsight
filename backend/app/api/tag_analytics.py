@@ -159,7 +159,7 @@ def get_tag_analysis(tag_name):
                 'satisfaction': doc.get('metrics', {}).get('satisfaction', {}).get('value', 0),
                 "resolution": doc.get('metrics', {}).get('resolution', {}).get('value', 0),
                 "attitude": doc.get('metrics', {}).get('attitude', {}).get('value', 0),
-                "risk": doc.get('metrics', {}).get('risk', {}).get('value', 0)
+                "security": doc.get('metrics', {}).get('security', {}).get('value', 0)
             })
         
         # 构建分页数据

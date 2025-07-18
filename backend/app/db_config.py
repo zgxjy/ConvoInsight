@@ -12,7 +12,7 @@ def setup_mongodb_local():
     uri = input(f"请输入MongoDB连接字符串 (默认: {default_uri}): ") or default_uri
     
     # 默认数据库名
-    default_db_name = "convoinsight"
+    default_db_name = "convoinsight-danghuan"
     db_name = input(f"请输入数据库名称 (默认: {default_db_name}): ") or default_db_name
     
     # 测试连接
@@ -57,7 +57,7 @@ def setup_mongodb_atlas():
         connection_string = re.sub(r"(:)(<password>|)(@)", f":{password}@", connection_string)
     
     # 获取数据库名称
-    default_db_name = "convoinsight"
+    default_db_name = "convoinsight-danghuan"
     db_name = input(f"请输入数据库名称 (默认: {default_db_name}): ") or default_db_name
     
     # 测试连接
@@ -85,7 +85,7 @@ def setup_mongodb_docker():
     uri = input(f"请输入Docker MongoDB连接字符串 (默认: {default_uri}): ") or default_uri
     
     # 默认数据库名
-    default_db_name = "convoinsight"
+    default_db_name = "convoinsight-danghuan"
     db_name = input(f"请输入数据库名称 (默认: {default_db_name}): ") or default_db_name
     
     print(f"✅ 已配置Docker MongoDB连接: {uri}")

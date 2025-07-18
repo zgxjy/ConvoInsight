@@ -90,9 +90,7 @@ const ConversationList: React.FC = () => {
 
   // 处理行点击，导航到详情页
   const handleRowClick = (record: ConversationListItem) => {
-    // 使用encodeURIComponent确保ID中的特殊字符被正确编码
-    const encodedId = encodeURIComponent(record.id);
-    navigate(`/conversation/${encodedId}`);
+    navigate(`/conversation/${record.id}`);
   };
 
   return (

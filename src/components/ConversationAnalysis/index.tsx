@@ -157,7 +157,7 @@ const ConversationAnalysis: React.FC = () => {
         satisfaction={conversation.metrics.satisfaction}
         resolution={conversation.metrics.resolution}
         attitude={conversation.metrics.attitude}
-        risk={conversation.metrics.risk}
+        security={conversation.metrics.security}
       />
 
       {/* 摘要信息行 */}

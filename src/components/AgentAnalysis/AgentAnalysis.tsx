@@ -19,7 +19,7 @@ interface AgentAnalysisData {
     avg_satisfaction: number;
     avg_resolution: number;
     avg_attitude: number;
-    avg_risk: number;
+    avg_security: number;
     overall_performance: number;
   };
   conversations: Array<{
@@ -33,7 +33,7 @@ interface AgentAnalysisData {
     satisfaction: number;
     resolution: number;
     attitude: number;
-    risk: number;
+    security: number;
     tags: string[];
   }>;
   pagination: {
@@ -117,7 +117,7 @@ const AgentAnalysis: React.FC = () => {
       avg_satisfaction: 0,
       avg_resolution: 0,
       avg_attitude: 0,
-      avg_risk: 0,
+      avg_security: 0,
       overall_performance: 0,
     },
     conversations: [],
@@ -423,22 +423,22 @@ const AgentAnalysis: React.FC = () => {
         <Col xs={24} sm={12} md={12} lg={12}>
           <Card className="metric-card">
             <Statistic
-              title="平均风险度"
-              value={agentData.performance.avg_risk}
+              title="平均安全度"
+              value={agentData.performance.avg_security}
               precision={1}
               valueStyle={{ 
                 fontSize: '36px', 
                 fontWeight: 800,
-                color: agentData.performance.avg_risk <= 20 ? '#52c41a' : 
-                      agentData.performance.avg_risk <= 40 ? '#faad14' : '#ff4d4f'
+                color: agentData.performance.avg_security <= 20 ? '#52c41a' : 
+                      agentData.performance.avg_security <= 40 ? '#faad14' : '#ff4d4f'
               }}
             />
             <Progress 
-              percent={agentData.performance.avg_risk} 
+              percent={agentData.performance.avg_security} 
               showInfo={false} 
               strokeColor={
-                agentData.performance.avg_risk <= 20 ? '#52c41a' : 
-                agentData.performance.avg_risk <= 40 ? '#faad14' : '#ff4d4f'
+                agentData.performance.avg_security <= 20 ? '#52c41a' : 
+                agentData.performance.avg_security <= 40 ? '#faad14' : '#ff4d4f'
               }
               className="metric-progress"
             />
@@ -568,9 +568,9 @@ const AgentAnalysis: React.FC = () => {
               render: (value) => <ScoreProgress value={value} />
             },
             {
-              title: '风险度',
-              dataIndex: 'risk',
-              key: 'risk',
+              title: '安全度',
+              dataIndex: 'security',
+              key: 'security',
               responsive: ['lg'],
               width: 120,
               render: (value) => <ScoreProgress value={value} />

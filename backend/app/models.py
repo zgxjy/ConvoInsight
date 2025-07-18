@@ -11,7 +11,7 @@ class Metrics(BaseModel):
     satisfaction: Metric
     resolution: Metric
     attitude: Metric
-    risk: Metric
+    security: Metric
 
 class ResolutionStatus(BaseModel):
     status: str
